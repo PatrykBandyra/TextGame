@@ -1,13 +1,123 @@
-/* <The name of this game>, by <your name goes here>. */
-
+% Dynamic states section
 :- dynamic i_am_at/1, at/2, holding/1.
 :- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
 
-i_am_at(someplace).
 
-path(someplace, n, someplace).
+% Starting position
+i_am_at(eo).
 
-at(thing, someplace).
+
+% Available paths between planets
+% Row 1
+path(eo, n, fates).
+path(eo, e, auster).
+
+path(auster, w, eo).
+path(auster, n, avernus).
+path(auster, e, artemi).
+
+path(artemi, w, auster).
+path(artemi, n, cepheus).
+path(artemi, e, somnus).
+
+path(leda, n, merope).
+path(leda, w, somnus).
+
+% Row 2
+path(fates, n, atlas).
+path(fates, e, avernus).
+path(fates, s, eo).
+
+path(avernus, n, boreas).
+path(avernus, e, cepheus).
+path(avernus, s, auster).
+path(avernus, w, fates).
+
+path(cepheus, n, castor).
+path(cepheus, e, flora).
+path(cepheus, s, artemi).
+path(cepheus, w, avernus).
+
+path(flora, n, electra).
+path(flora, e, merope).
+path(flora, s, somnus).
+path(flora, w, cepheus).
+
+path(merope, n, thanato).
+path(merope, s, leda).
+path(merope, w, flora).
+
+% Row 3
+path(atlas, n, demete).
+path(atlas, e, boreas).
+path(atlas, s, fates).
+
+path(boreas, n, hade).
+path(boreas, e, castor).
+path(boreas, s, avernus).
+path(boreas, w, atlas).
+
+path(castor, n, enyo).
+path(castor, e, electra).
+path(castor, s, cepheus).
+path(castor, w, boreas).
+
+path(electra, n, hecate).
+path(electra, e, thanato).
+path(electra, s, flora).
+path(electra, w, castor).
+
+path(thanato, n, orion).
+path(thanato, s, merope).
+path(thanato, w, electra).
+
+% Row 4
+path(demete, n, euterpe).
+path(demete, e, hade).
+path(demete, s, atlas).
+
+path(hade, n, sol).
+path(hade, e, enyo).
+path(hade, s, boreas).
+path(hade, w, demete).
+
+path(enyo, n, nymphs).
+path(enyo, e, hecate).
+path(enyo, s, castor).
+path(enyo, w, hade).
+
+path(hecate, n, pandora).
+path(hecate, e, orion).
+path(hecate, s, electra).
+path(hecate, w, enyo).
+
+path(orion, n, sileni).
+path(orion, s, thanato).
+path(orion, w, hecate).
+
+% Row 5
+path(euterpe, e, sol).
+path(euterpe, s, hade).
+
+path(sol, e, nymphs).
+path(sol, s, hade).
+path(sol, w, euterpe).
+
+path(nymphs, e, pandora).
+path(nymphs, s, enyo).
+path(nymphs, w, sol).
+
+path(pandora, e, sileni).
+path(pandora, s, hecate).
+path(pandora, w, nymphs).
+
+path(sileni, s, orion).
+path(sileni, w, pandora).
+
+
+% Objects in locations
+at(stick, eo).
+
 
 /* These rules describe how to pick up an object. */
 
@@ -132,5 +242,5 @@ start :-
 /* These rules describe the various rooms.  Depending on
    circumstances, a room may have more than one description. */
 
-describe(someplace) :- write('You are someplace.'), nl.
+describe(eo) :- write('You are on eo.'), nl.
 
