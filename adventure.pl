@@ -239,8 +239,39 @@ start :-
         look.
 
 
-/* These rules describe the various rooms.  Depending on
-   circumstances, a room may have more than one description. */
-
+% These rules describe the various planets.  Depending on circumstances, a planet may have more than one description.
+% Row 1
 describe(eo) :- write('You are on eo.'), nl.
+describe(auster) :- write('You are on auster.'), nl.
+describe(artemi) :- write('You are on artemi.'), nl.
+describe(somnus) :- write('You are on somnus.'), nl.
+describe(leda) :- write('You are on leda.'), nl.
+
+% Row 2
+describe(fates) :- write('You are on fates.'), nl.
+describe(avernus) :- write('You are on avernus.'), nl.
+describe(cepheus) :- write('You are on cepheus.'), nl.
+describe(flora) :- write('You are on flora.'), nl.
+describe(merope) :- write('You are on merope.'), nl.
+
+% Row 3
+describe(atlas) :- write('You are on atlas.'), nl.
+describe(boreas) :- write('You are on boreas.'), nl.
+describe(castor) :- write('You are on castor.'), nl.
+describe(electra) :- write('You are on electra.'), nl.
+describe(thanato) :- write('You are on thanato.'), nl.
+
+% Row 4
+describe(demete) :- write('You are on demete.'), nl.
+describe(hade) :- write('You are on hade.'), nl.
+describe(enyo) :- write('You are on enyo.'), nl.
+describe(hecate) :- write('You are on hecate.'), nl.
+describe(orion) :- write('You are on orion.'), nl.
+
+% Row 5
+describe(euterpe) :- write('You are on euterpe.'), nl.
+describe(sol) :- write('You are on sol.'), nl.
+describe(nymphs) :- write('You are on nymphs.'), nl.
+describe(pandora) :- write('You are on pandora.'), nl.
+describe(sileni) :- write('You are on sileni.'), nl.
 
