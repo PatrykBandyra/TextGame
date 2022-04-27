@@ -163,7 +163,7 @@ start_again :-
         write(' With your last resources you sent a package with all your items to your home planet eo.'), nl, nl,
         i_am_at(Here),
         lives(Person, Here),
-        assert(is_alive(Person)),
+        add_npc(Person),
         retract(i_am_at(Here)),
         assert(i_am_at(eo)),
         fuel(Quantity),
@@ -171,6 +171,14 @@ start_again :-
         assert(fuel(5)),
         look,
         check_fuel.
+
+/* These rules ensure that only one NPC of the same name is alive */
+
+add_npc(Person) :-
+        not(is_alive(Person)),
+        assert(is_alive(Person)).
+
+add_npc(_).
 
 /* This rule prints out amount of fuel you have. */
 check_fuel :-
@@ -377,27 +385,8 @@ describe(pandora) :- write('You are on pandora.'), nl.
 describe(sileni) :- write('You are on sileni.'), nl.
 
 /* These rules write how much fuel the player has. */
-read_fuel(0) :- write('You don''t have any fuel.'), nl.
-read_fuel(1) :- write('You have 1 fuel.'), nl.
-read_fuel(2) :- write('You have 2 fuel.'), nl.
-read_fuel(3) :- write('You have 3 fuel.'), nl.
-read_fuel(4) :- write('You have 4 fuel.'), nl.
-read_fuel(5) :- write('You have 5 fuel.'), nl.
-read_fuel(6) :- write('You have 6 fuel.'), nl.
-read_fuel(7) :- write('You have 7 fuel.'), nl.
-read_fuel(8) :- write('You have 8 fuel.'), nl.
-read_fuel(9) :- write('You have 9 fuel.'), nl.
-read_fuel(10) :- write('You have 10 fuel.'), nl.
-read_fuel(11) :- write('You have 11 fuel.'), nl.
-read_fuel(12) :- write('You have 12 fuel.'), nl.
-read_fuel(13) :- write('You have 13 fuel.'), nl.
-read_fuel(14) :- write('You have 14 fuel.'), nl.
-read_fuel(15) :- write('You have 15 fuel.'), nl.
-read_fuel(16) :- write('You have 16 fuel.'), nl.
-read_fuel(17) :- write('You have 17 fuel.'), nl.
-read_fuel(18) :- write('You have 18 fuel.'), nl.
-read_fuel(19) :- write('You have 19 fuel.'), nl.
-read_fuel(20) :- write('You have 20 fuel.'), nl.
+read_fuel(0) :- write('You don''t have any fuel.'), !, nl.
+read_fuel(X) :- write('You have '), write(X), write(' fuel'), nl.
 
 /* These rules write NPC dialogue. */
 speak(hardy) :- write('Hi my name is Hardy Carte'), !, nl.
