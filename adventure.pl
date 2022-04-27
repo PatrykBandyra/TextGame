@@ -1,10 +1,13 @@
 % Dynamic states section
-:- dynamic i_am_at/1, at/2, holding/1.
+:- dynamic i_am_at/1, at/2, holding/1, fuel/1.
 :- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
 
 
 % Starting position
 i_am_at(eo).
+
+% Starting fuel value
+fuel(5).
 
 
 % Available paths between planets
@@ -119,6 +122,24 @@ path(sileni, w, pandora).
 at(stick, eo).
 
 
+/* This rule prints out amount of fuel you have. */
+check_fuel :-
+        fuel(Quantity),
+        read_fuel(Quantity).  
+
+/* These rules manipulate the fuel value. */
+use_fuel(X) :-
+        fuel(Quantity),
+        NQuantity is Quantity-X,
+        retract(fuel(Quantity)),
+        assert(fuel(NQuantity)).
+
+add_fuel(X) :- 
+        fuel(Quantity),
+        NQuantity is Quantity+X,
+        retract(fuel(Quantity)),
+        assert(fuel(NQuantity)).
+
 /* These rules describe how to pick up an object. */
 
 take(X) :-
@@ -172,6 +193,7 @@ go(Direction) :-
         path(Here, Direction, There),
         retract(i_am_at(Here)),
         assert(i_am_at(There)),
+        use_fuel(1),
         !, look.
 
 go(_) :-
@@ -227,6 +249,7 @@ instructions :-
         write('take(Object).      -- to pick up an object.'), nl,
         write('drop(Object).      -- to put down an object.'), nl,
         write('look.              -- to look around you again.'), nl,
+        write('check_fuel.              -- to check how much fuel you have.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
         nl.
@@ -275,3 +298,25 @@ describe(nymphs) :- write('You are on nymphs.'), nl.
 describe(pandora) :- write('You are on pandora.'), nl.
 describe(sileni) :- write('You are on sileni.'), nl.
 
+/* These rules write how much fuel the player has. */
+read_fuel(0) :- write('You do not have any fuel.'), nl.
+read_fuel(1) :- write('You have 1 fuel.'), nl.
+read_fuel(2) :- write('You have 2 fuel.'), nl.
+read_fuel(3) :- write('You have 3 fuel.'), nl.
+read_fuel(4) :- write('You have 4 fuel.'), nl.
+read_fuel(5) :- write('You have 5 fuel.'), nl.
+read_fuel(6) :- write('You have 6 fuel.'), nl.
+read_fuel(7) :- write('You have 7 fuel.'), nl.
+read_fuel(8) :- write('You have 8 fuel.'), nl.
+read_fuel(9) :- write('You have 9 fuel.'), nl.
+read_fuel(10) :- write('You have 10 fuel.'), nl.
+read_fuel(11) :- write('You have 11 fuel.'), nl.
+read_fuel(12) :- write('You have 12 fuel.'), nl.
+read_fuel(13) :- write('You have 13 fuel.'), nl.
+read_fuel(14) :- write('You have 14 fuel.'), nl.
+read_fuel(15) :- write('You have 15 fuel.'), nl.
+read_fuel(16) :- write('You have 16 fuel.'), nl.
+read_fuel(17) :- write('You have 17 fuel.'), nl.
+read_fuel(18) :- write('You have 18 fuel.'), nl.
+read_fuel(19) :- write('You have 19 fuel.'), nl.
+read_fuel(20) :- write('You have 20 fuel.'), nl.
