@@ -1,6 +1,6 @@
 % Dynamic states section
-:- dynamic i_am_at/1, at/2, holding/1, fuel/1.
-:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
+:- dynamic i_am_at/1, at/2, holding/1, fuel/1, lives/2, is_alive/1.
+:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_alive(_)).
 
 
 % Starting position
@@ -121,10 +121,49 @@ path(sileni, w, pandora).
 % Objects in locations
 at(stick, eo).
 
+% NPCs in locations
+% Row 1
+lives(phelly, eo).
+lives(hardy, auster).
+lives(reby, artemi).
+lives(jamy, somnus).
+lives(anget, leda).
+
+% Row 2
+lives(arler, fates).
+lives(thera, avernus).
+lives(dave, cepheus).
+lives(linda, flora).
+lives(ryany, merope).
+
+% Row 3
+lives(jana, atlas).
+lives(jery, boreas).
+lives(jula, castor).
+lives(brusse, electra).
+lives(lyna, thanato).
+
+% Row 4
+lives(stimy, demete).
+lives(mara, hade).
+lives(patry, enyo).
+lives(cathy, hecate).
+lives(jimmy, orion).
+
+% Row 5
+lives(athen, euterpe).
+lives(johnne, sol).
+lives(sarie, nymphs).
+lives(walter, pandora).
+lives(lica, sileni).
+
+/* This rule takes you back to starting position and leaves new NPC on the current planet. */
 start_again :-
         write('You decided to settle on this planet and guide any future travellers that will meet you.'),
         write(' With your last resources you sent a package with all your items to your home planet eo.'), nl, nl,
         i_am_at(Here),
+        lives(Person, Here),
+        assert(is_alive(Person)),
         retract(i_am_at(Here)),
         assert(i_am_at(eo)),
         fuel(Quantity),
@@ -150,6 +189,17 @@ add_fuel(X) :-
         NQuantity is Quantity+X,
         retract(fuel(Quantity)),
         assert(fuel(NQuantity)).
+
+/* These rules describe how to talk to an NPC. */
+
+talk(X) :-
+        i_am_at(Place),
+        lives(X, Place),
+        is_alive(X),
+        speak(X),
+        !, nl.
+
+talk(_) :- write("I don''t see this person here."), nl.
 
 /* These rules describe how to pick up an object. */
 
@@ -220,6 +270,7 @@ look :-
         i_am_at(Place),
         describe(Place),
         notice_objects_at(Place),
+        notice_npcs_at(Place),
         nl.
 
 
@@ -234,6 +285,16 @@ notice_objects_at(Place) :-
 
 notice_objects_at(_).
 
+/* These rules set up a loop to mention all the NPcs in your vicinity. */
+
+notice_npcs_at(Place) :-
+        lives(Person, Place),
+        is_alive(Person),
+        nl,
+        write('There is a person named '), write(Person), write(' here.'), nl,
+        fail.
+
+notice_npcs_at(_).
 
 /* This rule tells how to die. */
 
@@ -262,8 +323,10 @@ instructions :-
         write('n.  s.  e.  w.     -- to go in that direction.'), nl,
         write('take(Object).      -- to pick up an object.'), nl,
         write('drop(Object).      -- to put down an object.'), nl,
+        write('talk(NPC)          -- to talk to an NPC.'), nl,
         write('look.              -- to look around you again.'), nl,
         write('check_fuel.        -- to check how much fuel you have.'), nl,
+        write('start_again.       -- to settle on the current planet and start again.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
         nl.
@@ -335,3 +398,31 @@ read_fuel(17) :- write('You have 17 fuel.'), nl.
 read_fuel(18) :- write('You have 18 fuel.'), nl.
 read_fuel(19) :- write('You have 19 fuel.'), nl.
 read_fuel(20) :- write('You have 20 fuel.'), nl.
+
+/* These rules write NPC dialogue. */
+speak(hardy) :- write('Hi my name is Hardy Carte'), !, nl.
+speak(jamy) :- write('Hi my name is Jamy Mithy'), !, nl.
+speak(arler) :- write('Hi my name is Arler Harra'), !, nl.
+speak(dave) :- write('Hi my name is Dave Dezal'), !, nl.
+speak(ryany) :- write('Hi my name is Ryany Gonzal'), !, nl.
+speak(jery) :- write('Hi my name is Jery Bailey'), !, nl.
+speak(brusse) :- write('Hi my name is Brusse Arkes'), !, nl.
+speak(stimy) :- write('Hi my name is Stimy Jackson'), !, nl.
+speak(patry) :- write('Hi my name is Patry Preeders'), !, nl.
+speak(jimmy) :- write('Hi my name is Jimmy Carte'), !, nl.
+speak(johnne) :- write('Hi my name is Johnne Reson'), !, nl.
+speak(aandond) :- write('Hi my name is Aandond Greeders'), !, nl.
+speak(walter) :- write('Hi my name is Walter Aker'), !, nl.
+speak(phelly) :- write('Hi my name is Phelly Perry'), !, nl.
+speak(reby) :- write('Hi my name is Reby Clore'), !, nl.
+speak(anget) :- write('Hi my name is Angnet Bennez'), !, nl.
+speak(thera) :- write('Hi my name is Thera Homart'), !, nl.
+speak(linda) :- write('Hi my name is Linda Wellee'), !, nl.
+speak(jana) :- write('Hi my name is Jana Rowner'), !, nl.
+speak(jula) :- write('Hi my name is Jula Andell'), !, nl.
+speak(lyna) :- write('Hi my name is Lyna Tewood'), !, nl.
+speak(mara) :- write('Hi my name is Mara Campbell'), !, nl.
+speak(cathy) :- write('Hi my name is Cathy Moore'), !, nl.
+speak(athen) :- write('Hi my name is Athen Tinez'), !, nl.
+speak(sarie) :- write('Hi my name is Sarie Halley'), !, nl.
+speak(lica) :- write('Hi my name is Lica Phardson'), !, nl.
