@@ -121,11 +121,22 @@ path(sileni, w, pandora).
 % Objects in locations
 at(stick, eo).
 
+start_again :-
+        write('You decided to settle on this planet and guide any future travellers that will meet you.'),
+        write(' With your last resources you sent a package with all your items to your home planet eo.'), nl, nl,
+        i_am_at(Here),
+        retract(i_am_at(Here)),
+        assert(i_am_at(eo)),
+        fuel(Quantity),
+        retract(fuel(Quantity)),
+        assert(fuel(5)),
+        look,
+        check_fuel.
 
 /* This rule prints out amount of fuel you have. */
 check_fuel :-
         fuel(Quantity),
-        read_fuel(Quantity).  
+        read_fuel(Quantity), nl.
 
 /* These rules manipulate the fuel value. */
 use_fuel(X) :-
@@ -189,15 +200,18 @@ w :- go(w).
 /* This rule tells how to move in a given direction. */
 
 go(Direction) :-
+        fuel(Quantity),
+        Quantity > 0,
         i_am_at(Here),
         path(Here, Direction, There),
         retract(i_am_at(Here)),
         assert(i_am_at(There)),
         use_fuel(1),
-        !, look.
+        !, look,
+        check_fuel.
 
 go(_) :-
-        write('You can''t go that way.').
+        write('You can''t go that way or you don''t have any fuel left.').
 
 
 /* This rule tells how to look about you. */
@@ -205,7 +219,6 @@ go(_) :-
 look :-
         i_am_at(Place),
         describe(Place),
-        nl,
         notice_objects_at(Place),
         nl.
 
@@ -215,6 +228,7 @@ look :-
 
 notice_objects_at(Place) :-
         at(X, Place),
+        nl,
         write('There is a '), write(X), write(' here.'), nl,
         fail.
 
@@ -249,7 +263,7 @@ instructions :-
         write('take(Object).      -- to pick up an object.'), nl,
         write('drop(Object).      -- to put down an object.'), nl,
         write('look.              -- to look around you again.'), nl,
-        write('check_fuel.              -- to check how much fuel you have.'), nl,
+        write('check_fuel.        -- to check how much fuel you have.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
         nl.
@@ -259,7 +273,8 @@ instructions :-
 
 start :-
         instructions,
-        look.
+        look,
+        check_fuel.
 
 
 % These rules describe the various planets.  Depending on circumstances, a planet may have more than one description.
@@ -299,7 +314,7 @@ describe(pandora) :- write('You are on pandora.'), nl.
 describe(sileni) :- write('You are on sileni.'), nl.
 
 /* These rules write how much fuel the player has. */
-read_fuel(0) :- write('You do not have any fuel.'), nl.
+read_fuel(0) :- write('You don''t have any fuel.'), nl.
 read_fuel(1) :- write('You have 1 fuel.'), nl.
 read_fuel(2) :- write('You have 2 fuel.'), nl.
 read_fuel(3) :- write('You have 3 fuel.'), nl.
