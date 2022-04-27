@@ -124,6 +124,7 @@ at(stick, eo).
 % NPCs in locations
 % Row 1
 lives(phelly, eo).
+lives(kathri, eo).
 lives(hardy, auster).
 lives(reby, artemi).
 lives(jamy, somnus).
@@ -157,13 +158,15 @@ lives(sarie, nymphs).
 lives(walter, pandora).
 lives(lica, sileni).
 
+% NPCs available from the start
+is_alive(kathri). 
+
 /* This rule takes you back to starting position and leaves new NPC on the current planet. */
 start_again :-
         write('You decided to settle on this planet and guide any future travellers that will meet you.'),
         write(' With your last resources you sent a package with all your items to your home planet eo.'), nl, nl,
         i_am_at(Here),
-        lives(Person, Here),
-        add_npc(Person),
+        add_npc(Here),
         retract(i_am_at(Here)),
         assert(i_am_at(eo)),
         fuel(Quantity),
@@ -172,9 +175,11 @@ start_again :-
         look,
         check_fuel.
 
-/* These rules ensure that only one NPC of the same name is alive */
 
-add_npc(Person) :-
+/* These rules adds new NPC, ensuring that they are not alive yet*/
+
+add_npc(Place) :-
+        lives(Person, Place),
         not(is_alive(Person)),
         assert(is_alive(Person)).
 
