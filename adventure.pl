@@ -162,18 +162,18 @@ lives(lica, sileni).
 is_alive(kathri). 
 
 /* This rule takes you back to starting position and leaves new NPC on the current planet. */
-start_again :-
-        write('You decided to settle on this planet and guide any future travellers that will meet you.'),
-        write(' With your last resources you sent a package with all your items to your home planet eo.'), nl, nl,
+restart :-
+        write('You decided to settle on this planet and guide any future travellers that will meet you.'), nl, nl,
         i_am_at(Here),
         add_npc(Here),
+        drop_all,
         retract(i_am_at(Here)),
         assert(i_am_at(eo)),
         fuel(Quantity),
         retract(fuel(Quantity)),
         assert(fuel(5)),
         look,
-        check_fuel.
+        check_fuel, !.
 
 
 /* These rules adds new NPC, ensuring that they are not alive yet*/
@@ -248,6 +248,14 @@ drop(_) :-
         write('You aren''t holding it!'),
         nl.
 
+/* This rule drops all objects that you're holding. */
+
+drop_all :-
+        holding(Object),
+        drop(Object),
+        fail.
+
+drop_all.
 
 /* These rules define the direction letters as calls to go/1. */
 
@@ -339,7 +347,7 @@ instructions :-
         write('talk(NPC)          -- to talk to an NPC.'), nl,
         write('look.              -- to look around you again.'), nl,
         write('check_fuel.        -- to check how much fuel you have.'), nl,
-        write('start_again.       -- to settle on the current planet and start again.'), nl,
+        write('restart.       -- to settle on the current planet and start again.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
         nl.
