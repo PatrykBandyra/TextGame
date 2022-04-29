@@ -358,8 +358,17 @@ e :- go(e).
 
 w :- go(w).
 
+origin :- go(origin).
 
 /* This rule tells how to move in a given direction. */
+
+go(Direction) :-
+        start_fuel(13),
+        Direction == origin,
+        i_am_at(Here),
+        retract(i_am_at(Here)),
+        assert(i_am_at(origin)),
+        !, look.
 
 go(Direction) :-
         fuel(Quantity),
@@ -492,6 +501,9 @@ describe(nymphs) :- write('You are on Nymphs, a small planet on which you can fi
 describe(pandora) :- write('You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.'), nl.
 describe(sileni) :- write('You are on Sileni. It is a moon of the capital planet of your galaxy Sol. People on Sol had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Sol.'), nl.
 
+% Endgame
+describe(origin) :- write('You are on Origin.'), nl.
+
 /* These rules write how much fuel the player has. */
 read_fuel(0) :- write('You don''t have any fuel.'), !, nl.
 read_fuel(X) :- write('You have '), write(X), write(' fuel'), nl.
@@ -556,4 +568,4 @@ execute_technology(quantum_computer) :-
         start_fuel(Quantity),
         retract(start_fuel(Quantity)),
         assert(start_fuel(13)),
-        write('You acquired Quantum Computer, you will now have 13 fuel after restarting'), !, nl.
+        write('You acquired Quantum Computer, you can now reach origin of the Signal. Type: origin.'), !, nl.
