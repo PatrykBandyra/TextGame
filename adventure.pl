@@ -163,10 +163,14 @@ at(stick, eo).
 at(stone, eo).
 
 % Objects you can craft toghether
-craftable(stick, stone, pickaxe).
+craftable(stick, stone, hyperdrive).
 
 % Exchangable objects
 exchange(stone, kathri, iron).
+
+% Technologies
+technology(hyperdrive).
+
 
 /* This rule takes you back to starting position and leaves new NPC on the current planet. */
 restart :-
@@ -211,6 +215,15 @@ add_fuel(X) :-
         retract(fuel(Quantity)),
         assert(fuel(NQuantity)).
 
+/* These rules checks if new technology was aquired. */
+
+check_technology(Name) :-
+        technology(Name),
+        execute_technology(Name),
+        retract(holding(Name)), !.
+
+check_technology(_).
+
 /* These rules describe how to talk to an NPC. */
 
 talk(X) :-
@@ -234,8 +247,9 @@ take(X) :-
         at(X, Place),
         retract(at(X, Place)),
         assert(holding(X)),
-        write('OK.'),
-        !, nl.
+        write('OK.'),  nl.
+        !,
+        check_technology(X).
 
 take(_) :-
         write('I don''t see it here.'),
@@ -274,7 +288,9 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), !, nl.
+        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl.
+        !,
+        check_technology(Product).
 
 combine(Object1, Object2) :-
         holding(Object1),
@@ -283,7 +299,9 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), !, nl.
+        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl
+        !,
+        check_technology(Product).
 
 combine(_, _) :-
         write('You can''t combine those two items together or you are''nt holding those items.'), !, nl.
@@ -298,12 +316,14 @@ give(Object, Person) :-
         exchange(Object, Person, Given),
         retract(holding(Object)),
         assert(holding(Given)),
-        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), !, nl.
+        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl
+        !,
+        check_technology(Given).
 
 give(_, _) :-
         write('You failed the exchange.'), !, nl.
 
-/* These rules sets up a loop to mention all items you are currently holding. */
+/* These rules set up a loop to mention all items you are currently holding. */
 
 inv :-
         holding(Object),
@@ -350,7 +370,7 @@ look :-
         nl.
 
 
-/* These rules sets up a loop to mention all the objects
+/* These rules set up a loop to mention all the objects
    in your vicinity. */
 
 notice_objects_at(Place) :-
@@ -361,7 +381,7 @@ notice_objects_at(Place) :-
 
 notice_objects_at(_).
 
-/* These rules sets up a loop to mention all the NPcs in your vicinity. */
+/* These rules set up a loop to mention all the NPcs in your vicinity. */
 
 notice_npcs_at(Place) :-
         lives(Person, Place),
@@ -489,3 +509,11 @@ speak(sarie) :- write('Hi my name is Sarie Halley'), !, nl.
 speak(lica) :- write('Hi my name is Lica Phardson'), !, nl.
 
 speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I’m glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. I wish you good luck in your journey!'), !, nl.
+
+/* These rules execute effect of acquiring new technology */
+
+execute_technology(hyperdrive) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(7)),
+        write('You acquired Hyperdrive, you will now have 7 fuel after restarting'), !, nl.
