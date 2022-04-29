@@ -118,13 +118,6 @@ path(sileni, s, orion).
 path(sileni, w, pandora).
 
 
-% Objects in locations
-at(stick, eo).
-at(stone, eo).
-
-% Objects you can craft toghether
-craftable(stick, stone, pickaxe).
-
 % NPCs in locations
 % Row 1
 lives(phelly, eo).
@@ -163,7 +156,17 @@ lives(walter, pandora).
 lives(lica, sileni).
 
 % NPCs available from the start
-is_alive(kathri). 
+is_alive(kathri).
+
+% Objects in locations
+at(stick, eo).
+at(stone, eo).
+
+% Objects you can craft toghether
+craftable(stick, stone, pickaxe).
+
+% Exchangable objects
+exchange(stone, kathri, iron).
 
 /* This rule takes you back to starting position and leaves new NPC on the current planet. */
 restart :-
@@ -283,6 +286,21 @@ combine(Object1, Object2) :-
 
 combine(_, _) :-
         write('You can''t combine those two items together or you are''nt holding those items.'), !, nl.
+
+/* This rule gives an item to an NPC in exchange for a different one. */
+
+give(Object, Person) :-
+        holding(Object),
+        i_am_at(Place),
+        lives(Person, Place),
+        is_alive(Person),
+        exchange(Object, Person, Given),
+        retract(holding(Object)),
+        assert(holding(Given)),
+        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), !, nl.
+
+give(_, _) :-
+        write('You failed the exchange.'), !, nl.
 
 /* These rules sets up a loop to mention all items you are currently holding. */
 
