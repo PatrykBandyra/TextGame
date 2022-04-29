@@ -247,7 +247,7 @@ take(X) :-
         at(X, Place),
         retract(at(X, Place)),
         assert(holding(X)),
-        write('OK.'),  nl.
+        write('OK.'),  nl,
         !,
         check_technology(X).
 
@@ -288,7 +288,7 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl.
+        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
         !,
         check_technology(Product).
 
@@ -299,7 +299,7 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl
+        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
         !,
         check_technology(Product).
 
@@ -316,7 +316,7 @@ give(Object, Person) :-
         exchange(Object, Person, Given),
         retract(holding(Object)),
         assert(holding(Given)),
-        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl
+        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl,
         !,
         check_technology(Given).
 
