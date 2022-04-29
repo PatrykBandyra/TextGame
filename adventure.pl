@@ -363,39 +363,39 @@ start :-
 
 % These rules describe the various planets.  Depending on circumstances, a planet may have more than one description.
 % Row 1
-describe(eo) :- write('You are on eo.'), nl.
-describe(auster) :- write('You are on auster.'), nl.
-describe(artemi) :- write('You are on artemi.'), nl.
-describe(somnus) :- write('You are on somnus.'), nl.
-describe(leda) :- write('You are on leda.'), nl.
+describe(eo) :- write('You are on your home planet Eo.'), nl.
+describe(auster) :- write('You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can''t see much because the view is obstructed by all the skyscrapers.'), nl.
+describe(artemi) :- write('You are on Artemi, with your first glance you can see that it is not as populated as Eo or Artemi. There are a couple bigger cities here, but this planet mainly serves as a quarry for your home planet.'), nl.
+describe(somnus) :- write('You are on Somnus. It has almost no human inhabitants because the whole planet is covered in water, but there is a whole civilization living at the bottom of the ocean.'), nl.
+describe(leda) :- write('You are on Leda, a dwarf planet. The only thing that''s on this planet is a gas station.'), nl.
 
 % Row 2
-describe(fates) :- write('You are on fates.'), nl.
-describe(avernus) :- write('You are on avernus.'), nl.
-describe(cepheus) :- write('You are on cepheus.'), nl.
-describe(flora) :- write('You are on flora.'), nl.
-describe(merope) :- write('You are on merope.'), nl.
+describe(fates) :- write('You are on Fates. It''s not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.'), nl.
+describe(avernus) :- write('You are on Avernus. It is a moon of planet Auster. There are a couple of smaller cities here, but nothing impressive because it still is a moon'), nl.
+describe(cepheus) :- write('You are on Cepheus, which is mostly covered in sand. The only inhabitants of this planet are sand people, because only they can survive the extreme temperatures for longer periods of time.'), nl.
+describe(flora) :- write('You are on Flora. The whole planet is basically a huge rainforest. Not much is known about it. Because of many predators living here nobody wants to explore it deeper.'), nl.
+describe(merope) :- write('You are on Merope. Most of its inhabitants are fugitives and criminals who are banished from their own planets. There is a huge casino here.'), nl.
 
 % Row 3
-describe(atlas) :- write('You are on atlas.'), nl.
-describe(boreas) :- write('You are on boreas.'), nl.
-describe(castor) :- write('You are on castor.'), nl.
-describe(electra) :- write('You are on electra.'), nl.
-describe(thanato) :- write('You are on thanato.'), nl.
+describe(atlas) :- write('You are on Atlas, the desert planet. Every civilization owns part of the planet, from which they harvest valuable spice.'), nl.
+describe(boreas) :- write('You are on Boreas. It is a wasteland where there is a lot of garbage. In the past it was a battlefield for many wars, which ruined the whole planet.'), nl.
+describe(castor) :- write('You are on Castor, the whole planet is covered in big mountains and hills, so it''s difficult to build a big civilization here. But under all that rock there are a ton of valuable resources which locals trade for spice.'), nl.
+describe(electra) :- write('You are on Electra. It is said that the storm here stops for only one day in a month. As a result almost no one wants to live here and most of the people here are travelers.'), nl.
+describe(thanato) :- write('You are on Thanato. There are no animals or plants here, due to lack of natural reserves of water. Amazingly some people managed to survive on this planet, but only because of caravans bringing them necessary supplies, which they buy in exchange for fuel in which this planet is rich.'), nl.
 
 % Row 4
-describe(demete) :- write('You are on demete.'), nl.
-describe(hade) :- write('You are on hade.'), nl.
-describe(enyo) :- write('You are on enyo.'), nl.
-describe(hecate) :- write('You are on hecate.'), nl.
-describe(orion) :- write('You are on orion.'), nl.
+describe(demete) :- write('You are on Demete. The whole planet is a beach paradise. It is covered in one big ocean with lots of little and big islands. The inhabitants are very friendly and are known for their hospitality.'), nl.
+describe(hade) :- write('You are on Hade, the volcanic planet. It is almost uninhabitable because of many active volcanoes and lava that covers most of the planet. Despite such extreme conditions some people managed to call this place home.'), nl.
+describe(enyo) :- write('You are on Enyo. For some reason it is known as the land of wind and shade. The only inhabitant of this planet is a weird species of yellow salamanders. There is still a lot to learn about this unusual planet filled with oil lakes.'), nl.
+describe(hecate) :- write('You are on Hecate, the frozen planet. There is really not much to it except for ice …. and snow.'), nl.
+describe(orion) :- write('You are on Orion. It is the capital planet of your galaxy, similarly to your home planet it is mostly covered in skyscrapers. The locals can be quite eccentric, but nothing that you wouldn''t handle.'), nl.
 
 % Row 5
-describe(euterpe) :- write('You are on euterpe.'), nl.
-describe(sol) :- write('You are on sol.'), nl.
-describe(nymphs) :- write('You are on nymphs.'), nl.
-describe(pandora) :- write('You are on pandora.'), nl.
-describe(sileni) :- write('You are on sileni.'), nl.
+describe(euterpe) :- write('You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.'), nl.
+describe(sol) :- write('You are on Sol. It is a colossal space station that was set up to study nearby star. With time it evolved to the size of a little city and is no longer used as a research facility.'), nl.
+describe(nymphs) :- write('You are on Nymphs, a small planet on which you can find the biggest and most famous nightclubs. The upper class of Orion comes here to get high and cheat on their significant others.'), nl.
+describe(pandora) :- write('You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.'), nl.
+describe(sileni) :- write('You are on Sileni. It is a moon of the capital planet of your galaxy Sol. People on Sol had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Sol.'), nl.
 
 /* These rules write how much fuel the player has. */
 read_fuel(0) :- write('You don''t have any fuel.'), !, nl.
@@ -428,3 +428,5 @@ speak(cathy) :- write('Hi my name is Cathy Moore'), !, nl.
 speak(athen) :- write('Hi my name is Athen Tinez'), !, nl.
 speak(sarie) :- write('Hi my name is Sarie Halley'), !, nl.
 speak(lica) :- write('Hi my name is Lica Phardson'), !, nl.
+
+speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I’m glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. I wish you good luck in your journey!'), !, nl.
