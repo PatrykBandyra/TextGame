@@ -1,0 +1,576 @@
+Welcome to SWI-Prolog (threaded, 64 bits, version 7.6.4)
+SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
+Please run ?- license. for legal details.
+
+For online help and background, visit http://www.swi-prolog.org
+For built-in help, use ?- help(Topic). or ?- apropos(Word).
+
+?- start.
+
+Enter commands using standard Prolog syntax.
+Available commands are:
+start.             -- to start the game.
+n.  s.  e.  w.     -- to go in that direction.
+take(Object).      -- to pick up an object.
+drop(Object).      -- to put down an object.
+inv.               -- to check what items you are holding.
+combine(O1, O2).   -- to combine two items together.
+talk(NPC).         -- to talk to an NPC.
+look.              -- to look around you again.
+check_fuel.        -- to check how much fuel you have.
+restart.           -- to settle on the current planet and start again.
+instructions.      -- to see this message again.
+halt.              -- to end the game and quit.
+
+You are on your home planet Eo.
+
+There is a person named phelly here.
+
+There is a person named kathri here.
+
+You have 3 fuel
+
+true.
+
+?- talk(kathri).
+Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I'm glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. 
+As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I th
+ink you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. Explore, find 
+new technology and maybe you would even meet someone that will help you. I wish you good luck in your journey!
+
+true.
+
+?- talk(phelly).
+Hello! I am Phelly Perry from Eosian ATF bureau and I wish you good luck in your adventure. I have something less official to tell you. Listen… We recently captured a smuggler on our outer frontier and he was in posse
+ssion of something you may find very helpful. Look, I do you a favor  and maybe one day you will be able to repay me in one way or another, ha, ha. So I have a schema of Deflective Shield for you. You need Nanoparticl
+e Coolant and Gold-Plated Microchip in order to create it.
+
+true.
+
+?- e.
+You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can't see much because the view is obstructed by all the skyscrapers.
+
+There is a coolant here.
+
+There is a person named hardy here.
+
+You have 2 fuel
+
+true.
+
+?- talk(hardy).
+Hi! Are you from Eo? Yes? So cool, I have half of my family there. My name is Hardy. I call myself an adventurer, although I have never been outside of our solar system. Well… But you know what? Maybe you will help me
+ out in my escape from this galaxy? I am so hungry for travel which I cannot afford. You are really trying to build this superb spaceship? So cool!!! I can even help you! I know about the Hyperdrive schema - I was an 
+engineer… Before they threw me out of my company and took all the titles. So... You need a Reinforced Steel and Electromagnetic Generator. I have one more hint for you. If you were in need of a Gold-Plated Microchip, 
+you would have to go to Fates where they have a small factory of these rare components.
+
+true.
+
+?- look.
+You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can't see much because the view is obstructed by all the skyscrapers.
+
+There is a coolant here.
+
+There is a person named hardy here.
+
+true.
+
+?- take(coolant).
+OK.
+true.
+
+?- w.
+You are on your home planet Eo.
+
+There is a person named phelly here.
+
+There is a person named kathri here.
+
+You have 1 fuel
+
+true.
+
+?- n.
+You are on Fates. It's not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.
+
+There is a microchip here.
+
+There is a person named arler here.
+
+You don't have any fuel.
+
+true.
+
+?- talk(arler).
+Welcome to Fates. Even though there are not many of us, we still were able to hold those barbarians from Hecate off of our precious resources. It is just information for you and you should share it with other traveler
+s. And remember… We are the best friends for our friends and the greatest enemies for our enemies. In an act of goodwill, we are going to share with you our schema for Hyperdrive. Listen carefully. In order to constru
+ct this advanced piece of equipment, you need to obtain Reinforced Steel and Electromagnetic Generator. Good luck in your search!
+
+true.
+
+?- look.
+You are on Fates. It's not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.
+
+There is a microchip here.
+
+There is a person named arler here.
+
+true.
+
+?- take(microchip).
+OK.
+true.
+
+?- inv.
+You have a coolant.
+You have a microchip.
+true.
+
+?- combine(coolant, microchip).
+You successfully combined coolant and microchip into shield.
+You acquired Deflector Shield, you will now have 5 fuel after restarting
+true.
+
+?- restart.
+You decided to settle on this planet and guide any future travellers that will meet you.
+
+You are on your home planet Eo.
+
+There is a person named phelly here.
+
+There is a person named kathri here.
+
+You have 5 fuel
+
+true.
+
+?- n.
+You are on Fates. It's not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.
+
+There is a person named arler here.
+
+You have 4 fuel
+
+true.
+
+?- e.
+You are on Avernus. It is a moon of planet Auster. There are a couple of smaller cities here, but nothing impressive because it still is a moon
+
+There is a steel here.
+
+There is a person named thera here.
+
+You have 3 fuel
+
+true.
+
+?- talk(thera).
+Hello. Do I know where to get Platinum Circuit? Well, of course I do. You need to order them online. They are pretty expensive so I do not know if you can afford them. Personally, I have one of them. I am a well-estab
+lished lawyer and… Have I mentioned that I am a lawyer? Yes? Good! Do I know where those chips come from? Of course, they are from Sileni. Where is this place? Ummm… I have no idea. Sorry, I have to go.
+
+true.
+
+?- take(steel).
+OK.
+true.
+
+?- n.
+You are on Boreas. It is a wasteland where there is a lot of garbage. In the past it was a battlefield for many wars, which ruined the whole planet.
+
+You have 2 fuel
+
+true.
+
+?- e.
+You are on Castor, the whole planet is covered in big mountains and hills, so it's difficult to build a big civilization here. But under all that rock there are a ton of valuable resources which locals trade for spice
+.
+
+There is a generator here.
+
+You have 1 fuel
+
+true.
+
+?- take(generator).
+OK.
+true.
+
+?- inv.
+You have a steel.
+You have a generator.
+true.
+
+?- combine(steel, generator).
+You successfully combined steel and generator into hyperdrive.
+You acquired Hyperdrive, you will now have 7 fuel after restarting
+true.
+
+?- restart.
+You decided to settle on this planet and guide any future travellers that will meet you.
+
+You are on your home planet Eo.
+
+There is a person named phelly here.
+
+There is a person named kathri here.
+
+You have 7 fuel
+
+true.
+
+?- n.
+You are on Fates. It's not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.
+
+There is a person named arler here.
+
+You have 6 fuel
+
+true.
+
+?- n.
+You are on Atlas, the desert planet. Every civilization owns part of the planet, from which they harvest valuable spice.
+
+There is a person named jana here.
+
+You have 5 fuel
+
+true.
+
+?- n.
+You are on Demete. The whole planet is a beach paradise. It is covered in one big ocean with lots of little and big islands. The inhabitants are very friendly and are known for their hospitality.
+
+There is a plasma here.
+
+You have 4 fuel
+
+true.
+
+?- take(plasma).
+OK.
+true.
+
+?- e.
+You are on Hade, the volcanic planet. It is almost uninhabitable because of many active volcanoes and lava that covers most of the planet. Despite such extreme conditions some people managed to call this place home.
+
+You have 3 fuel
+
+true.
+
+?- e.
+You are on Enyo. For some reason it is known as the land of wind and shade. The only inhabitant of this planet is a weird species of yellow salamanders. There is still a lot to learn about this unusual planet filled w
+ith oil lakes.
+
+You have 2 fuel
+
+true.
+
+?- e.
+You are on Hecate, the frozen planet. There is really not much to it except for ice …. and snow.
+
+You have 1 fuel
+
+true.
+
+?- n.
+You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.
+
+There is a particle here.
+
+You don't have any fuel.
+
+true.
+
+?- take(particle).
+OK.
+true.
+
+?- inv.
+You have a plasma.
+You have a particle.
+true.
+
+?- combine(plasma, particle).
+You successfully combined plasma and particle into antimatter.
+You acquired Antiamter Fuel, you will now have 9 fuel after restarting
+true.
+
+?- restart.
+You decided to settle on this planet and guide any future travellers that will meet you.
+
+You are on your home planet Eo.
+
+There is a person named phelly here.
+
+There is a person named kathri here.
+
+You have 9 fuel
+
+true.
+
+?- e.
+You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can't see much because the view is obstructed by all the skyscrapers.
+
+There is a person named hardy here.
+
+You have 8 fuel
+
+true.
+
+?- e.
+You are on Artemi, with your first glance you can see that it is not as populated as Eo or Artemi. There are a couple bigger cities here, but this planet mainly serves as a quarry for your home planet.
+
+You have 7 fuel
+
+true.
+
+?- e.
+You are on Somnus. It has almost no human inhabitants because the whole planet is covered in water, but there is a whole civilization living at the bottom of the ocean.
+
+You have 6 fuel
+
+true.
+
+?- e.
+You are on Leda, a dwarf planet. The only thing that's on this planet is a gas station.
+
+There is a microprocessor here.
+
+There is a person named angnet here.
+
+You have 5 fuel
+
+true.
+
+?- talk(angnet).
+Hello traveler! I am Angnet. You will find nothing and nothing here. So I have no idea why you come to our planet. Nevertheless, welcome. You are in search of Platinum Circuit, he? That’s good. Because there are many 
+people coming here from far North that have those rare chips implanted in their skulls. Crazy! Those chips cost a small fortune. Unfortunately, I cannot afford them. If I had, I would not live on this deserted planet,
+ ehhh…
+
+true.
+
+?- look.
+You are on Leda, a dwarf planet. The only thing that's on this planet is a gas station.
+
+There is a microprocessor here.
+
+There is a person named angnet here.
+
+true.
+
+?- take(micoprocessor).
+I don't see it here.
+true.
+
+?- take(microprocessor).
+OK.
+true.
+
+?- n.
+You are on Merope. Most of its inhabitants are fugitives and criminals who are banished from their own planets. There is a huge casino here.
+
+There is a qubits here.
+
+You have 4 fuel
+
+true.
+
+?- n.
+You are on Thanato. There are no animals or plants here, due to lack of natural reserves of water. Amazingly some people managed to survive on this planet, but only because of caravans bringing them necessary supplies
+, which they buy in exchange for fuel in which this planet is rich.
+
+You have 3 fuel
+
+true.
+
+?- n.
+You are on Orion. It is the capital planet of your galaxy, similarly to your home planet it is mostly covered in skyscrapers. The locals can be quite eccentric, but nothing that you wouldn't handle.
+
+You have 2 fuel
+
+true.
+
+?- n.
+You are on Sileni. It is a moon of the capital planet of your galaxy Sol. People on Sol had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Sol.
+
+There is a circuit here.
+
+There is a person named lica here.
+
+You have 1 fuel
+
+true.
+
+?- talk(lica).
+Hi! Welcome to my home. I am Lica. I heard from my friends from other planets that there is a lone traveler looking for strange things in the whole galaxy. Is that you? Superb! You are pretty famous. At least in a cir
+cle of my friends, ha, ha, ha. What do you need. I might be able to help you. Quantum Computer schema? Well… Good for you, because my husband is working as a researcher in Sol National Institute. Wait a minute… I will
+ find a schema. Here you go! (Schema: Components: Sealed Micro Black Hole + Cluster of Qubit)
+
+true.
+
+?- look.
+You are on Sileni. It is a moon of the capital planet of your galaxy Sol. People on Sol had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Sol.
+
+There is a circuit here.
+
+There is a person named lica here.
+
+true.
+
+?- take(circuit).
+OK.
+true.
+
+?- inv.
+You have a microprocessor.
+You have a circuit.
+true.
+
+?- combine(microprocessor, circuit).
+You successfully combined microprocessor and circuit into scanner.
+You acquired Deep Space Scanner, you will now have 11 fuel after restarting
+true.
+
+?- restart.
+You decided to settle on this planet and guide any future travellers that will meet you.
+
+You are on your home planet Eo.
+
+There is a person named phelly here.
+
+There is a person named kathri here.
+
+You have 11 fuel
+
+true.
+
+?- n.
+You are on Fates. It's not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.
+
+There is a person named arler here.
+
+You have 10 fuel
+
+true.
+
+?- n.
+You are on Atlas, the desert planet. Every civilization owns part of the planet, from which they harvest valuable spice.
+
+There is a person named jana here.
+
+You have 9 fuel
+
+true.
+
+?- n.
+You are on Demete. The whole planet is a beach paradise. It is covered in one big ocean with lots of little and big islands. The inhabitants are very friendly and are known for their hospitality.
+
+You have 8 fuel
+
+true.
+
+?- n.
+You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.
+
+There is a black_hole here.
+
+You have 7 fuel
+
+true.
+
+?- take(black_hole).
+OK.
+true.
+
+?- look.
+You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.
+
+true.
+
+?- check_fuel().
+You have 7 fuel
+
+true.
+
+?- e.
+You are on Sol. It is a colossal space station that was set up to study nearby star. With time it evolved to the size of a little city and is no longer used as a research facility.
+
+You have 6 fuel
+
+true.
+
+?- e.
+You are on Nymphs, a small planet on which you can find the biggest and most famous nightclubs. The upper class of Orion comes here to get high and cheat on their significant others.
+
+You have 5 fuel
+
+true.
+
+?- e.
+You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.
+
+There is a person named walter here.
+
+You have 4 fuel
+
+true.
+
+?- talk(walter).
+Hi! Do you remember me? We met on Eo in this popular bar. Yeah! Exactly there! Okay, I wish you luck, friend.
+
+true.
+
+?- e.
+You are on Sileni. It is a moon of the capital planet of your galaxy Sol. People on Sol had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Sol.
+
+There is a person named lica here.
+
+You have 3 fuel
+
+true.
+
+?- s.
+You are on Orion. It is the capital planet of your galaxy, similarly to your home planet it is mostly covered in skyscrapers. The locals can be quite eccentric, but nothing that you wouldn't handle.
+
+You have 2 fuel
+
+true.
+
+?- s.
+You are on Thanato. There are no animals or plants here, due to lack of natural reserves of water. Amazingly some people managed to survive on this planet, but only because of caravans bringing them necessary supplies
+, which they buy in exchange for fuel in which this planet is rich.
+
+You have 1 fuel
+
+true.
+
+?- s.
+You are on Merope. Most of its inhabitants are fugitives and criminals who are banished from their own planets. There is a huge casino here.
+
+There is a qubits here.
+
+You don't have any fuel.
+
+true.
+
+?- take(qubits).
+OK.
+true.
+
+?- inv.
+You have a black_hole.
+You have a qubits.
+true.
+
+?- combine(black_hole, qubits).
+You successfully combined black_hole and qubits into quantum_computer.
+You acquired Quantum Computer, you can now reach origin of the Signal. Type: origin.
+true.
+
+?- origin.
+Wow, you did it! You left your Galaxy! In the distance you see a very bright point growing and growing with every moment. Is it a place where creatures which are responsible for your existence live?  PIP…PIP… What is 
+that? PIP… INTERNAL SYSTEM ERROR. BUUUM!!! (your spaceship exploded and you died - it turned out that a software engineer who was partially responsible for kernel code in system of your spaceship was not in fact a rea
+l engineer and messed up code responsible for taking care of pressure in gas tanks - this was a direct cause of an explosion: bug in code that caused the pressure in gas tanks to raise too much and too fast) :(       
+
+true.
+
+?- halt.
