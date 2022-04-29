@@ -7,7 +7,7 @@
 i_am_at(eo).
 
 % Starting fuel value
-start_fuel(5).
+start_fuel(3).
 
 
 % Available paths between planets
@@ -159,17 +159,33 @@ lives(lica, sileni).
 is_alive(kathri).
 
 % Objects in locations
-at(stick, eo).
-at(stone, eo).
+at(coolant, auster).
+at(microprocessor, leda).
+at(microchip, fates).
+at(steel, avernus).
+at(qubits, merope).
+at(generator, castor).
+at(plasma, demete).
+at(black_hole, euterpe).
+at(particle, pandora).
+at(circuit, sileni).
 
-% Objects you can craft toghether
-craftable(stick, stone, hyperdrive).
+% Objects you can craft together
+craftable(coolant, microchip, shield).
+craftable(steel, generator, hyperdrive).
+craftable(plasma, particle, antimatter).
+craftable(circuit, microprocessor, scanner).
+craftable(qubits, black_hole, quantum_computer).
 
 % Exchangable objects
-exchange(stone, kathri, iron).
+%exchange(stone, kathri, iron).
 
 % Technologies
+technology(shield).
 technology(hyperdrive).
+technology(antimatter).
+technology(scanner).
+technology(quantum_computer).
 
 
 /* This rule takes you back to starting position and leaves new NPC on the current planet. */
@@ -512,8 +528,32 @@ speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander c
 
 /* These rules execute effect of acquiring new technology */
 
+execute_technology(shield) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(5)),
+        write('You acquired Deflector Shield, you will now have 5 fuel after restarting'), !, nl.
+
 execute_technology(hyperdrive) :-
         start_fuel(Quantity),
         retract(start_fuel(Quantity)),
         assert(start_fuel(7)),
         write('You acquired Hyperdrive, you will now have 7 fuel after restarting'), !, nl.
+
+execute_technology(antimatter) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(9)),
+        write('You acquired Antiamter Fuel, you will now have 9 fuel after restarting'), !, nl.
+
+execute_technology(scanner) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(11)),
+        write('You acquired Deep Space Scanner, you will now have 11 fuel after restarting'), !, nl.
+
+execute_technology(quantum_computer) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(13)),
+        write('You acquired Quantum Computer, you will now have 13 fuel after restarting'), !, nl.
