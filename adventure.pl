@@ -1,5 +1,5 @@
 % Dynamic states section
-:- dynamic i_am_at/1, at/2, holding/1, fuel/1, lives/2, is_alive/1.
+:- dynamic i_am_at/1, at/2, holding/1, start_fuel/1, fuel/1, lives/2, is_alive/1.
 :- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_alive(_)).
 
 
@@ -7,7 +7,7 @@
 i_am_at(eo).
 
 % Starting fuel value
-fuel(5).
+start_fuel(5).
 
 
 % Available paths between planets
@@ -178,7 +178,8 @@ restart :-
         assert(i_am_at(eo)),
         fuel(Quantity),
         retract(fuel(Quantity)),
-        assert(fuel(5)),
+        start_fuel(NQuantity),
+        assert(fuel(NQuantity)),
         look,
         check_fuel, !.
 
@@ -412,6 +413,8 @@ instructions :-
 /* This rule prints out instructions and tells where you are. */
 
 start :-
+        start_fuel(Quantity),
+        assert(fuel(Quantity)),
         instructions,
         look,
         check_fuel.
