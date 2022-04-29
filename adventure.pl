@@ -304,7 +304,7 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
+        write('You successfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
         !,
         check_technology(Product).
 
@@ -315,7 +315,7 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
+        write('You successfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
         !,
         check_technology(Product).
 
@@ -332,7 +332,7 @@ give(Object, Person) :-
         exchange(Object, Person, Given),
         retract(holding(Object)),
         assert(holding(Given)),
-        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl,
+        write('You successfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl,
         !,
         check_technology(Given).
 
@@ -437,7 +437,7 @@ instructions :-
         write('drop(Object).      -- to put down an object.'), nl,
         write('inv.               -- to check what items you are holding.'), nl,
         write('combine(O1, O2).   -- to combine two items together.'), nl,
-        write('talk(NPC)          -- to talk to an NPC.'), nl,
+        write('talk(NPC).         -- to talk to an NPC.'), nl,
         write('look.              -- to look around you again.'), nl,
         write('check_fuel.        -- to check how much fuel you have.'), nl,
         write('restart.           -- to settle on the current planet and start again.'), nl,
@@ -524,7 +524,7 @@ speak(athen) :- write('Hi my name is Athen Tinez'), !, nl.
 speak(sarie) :- write('Hi my name is Sarie Halley'), !, nl.
 speak(lica) :- write('Hi my name is Lica Phardson'), !, nl.
 
-speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I’m glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. I wish you good luck in your journey!'), !, nl.
+speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I''m glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. I wish you good luck in your journey!'), !, nl.
 
 /* These rules execute effect of acquiring new technology */
 
