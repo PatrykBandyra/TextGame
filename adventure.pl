@@ -120,6 +120,10 @@ path(sileni, w, pandora).
 
 % Objects in locations
 at(stick, eo).
+at(stone, eo).
+
+% Objects you can craft toghether
+craftable(stick, stone, pickaxe).
 
 % NPCs in locations
 % Row 1
@@ -257,6 +261,38 @@ drop_all :-
 
 drop_all.
 
+/* This rule combines two objects into a new object. */
+
+combine(Object1, Object2) :-
+        holding(Object1),
+        holding(Object2),
+        craftable(Object1, Object2, Product),
+        retract(holding(Object1)),
+        retract(holding(Object2)),
+        assert(holding(Product)),
+        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), !, nl.
+
+combine(Object1, Object2) :-
+        holding(Object1),
+        holding(Object2),
+        craftable(Object2, Object1, Product),
+        retract(holding(Object1)),
+        retract(holding(Object2)),
+        assert(holding(Product)),
+        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), !, nl.
+
+combine(_, _) :-
+        write('You can''t combine those two items together or you are''nt holding those items.'), !, nl.
+
+/* These rules sets up a loop to mention all items you are currently holding. */
+
+inv :-
+        holding(Object),
+        write('You have a '), write(Object), write('.'), nl,
+        fail.
+
+inv.
+
 /* These rules define the direction letters as calls to go/1. */
 
 n :- go(n).
@@ -295,7 +331,7 @@ look :-
         nl.
 
 
-/* These rules set up a loop to mention all the objects
+/* These rules sets up a loop to mention all the objects
    in your vicinity. */
 
 notice_objects_at(Place) :-
@@ -306,7 +342,7 @@ notice_objects_at(Place) :-
 
 notice_objects_at(_).
 
-/* These rules set up a loop to mention all the NPcs in your vicinity. */
+/* These rules sets up a loop to mention all the NPcs in your vicinity. */
 
 notice_npcs_at(Place) :-
         lives(Person, Place),
@@ -344,10 +380,12 @@ instructions :-
         write('n.  s.  e.  w.     -- to go in that direction.'), nl,
         write('take(Object).      -- to pick up an object.'), nl,
         write('drop(Object).      -- to put down an object.'), nl,
+        write('inv.               -- to check what items you are holding.'), nl,
+        write('combine(O1, O2).   -- to combine two items together.'), nl,
         write('talk(NPC)          -- to talk to an NPC.'), nl,
         write('look.              -- to look around you again.'), nl,
         write('check_fuel.        -- to check how much fuel you have.'), nl,
-        write('restart.       -- to settle on the current planet and start again.'), nl,
+        write('restart.           -- to settle on the current planet and start again.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
         nl.
