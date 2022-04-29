@@ -1,6 +1,6 @@
 % Dynamic states section
 :- dynamic i_am_at/1, at/2, holding/1, start_fuel/1, fuel/1, lives/2, is_alive/1.
-:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_alive(_)).
+:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(is_alive(_)), retractall(holding(_)), retractall(start_fuel(_)), retractall(fuel(_)).
 
 
 % Starting position
