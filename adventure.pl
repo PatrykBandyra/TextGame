@@ -7,7 +7,7 @@
 i_am_at(eo).
 
 % Starting fuel value
-start_fuel(5).
+start_fuel(3).
 
 
 % Available paths between planets
@@ -22,6 +22,10 @@ path(auster, e, artemi).
 path(artemi, w, auster).
 path(artemi, n, cepheus).
 path(artemi, e, somnus).
+
+path(somnus, w, artemi).
+path(somnus, n, flora).
+path(somnus, e, leda).
 
 path(leda, n, merope).
 path(leda, w, somnus).
@@ -125,7 +129,7 @@ lives(kathri, eo).
 lives(hardy, auster).
 lives(reby, artemi).
 lives(jamy, somnus).
-lives(anget, leda).
+lives(angnet, leda).
 
 % Row 2
 lives(arler, fates).
@@ -157,19 +161,44 @@ lives(lica, sileni).
 
 % NPCs available from the start
 is_alive(kathri).
+is_alive(phelly).
+is_alive(hardy).
+is_alive(angnet).
+is_alive(arler).
+is_alive(thera).
+is_alive(linda).
+is_alive(jana).
+is_alive(brusse).
+is_alive(lica).
 
 % Objects in locations
-at(stick, eo).
-at(stone, eo).
+at(coolant, auster).
+at(microprocessor, leda).
+at(microchip, fates).
+at(steel, avernus).
+at(qubits, merope).
+at(generator, castor).
+at(plasma, demete).
+at(black_hole, euterpe).
+at(particle, pandora).
+at(circuit, sileni).
 
-% Objects you can craft toghether
-craftable(stick, stone, hyperdrive).
+% Objects you can craft together
+craftable(coolant, microchip, shield).
+craftable(steel, generator, hyperdrive).
+craftable(plasma, particle, antimatter).
+craftable(circuit, microprocessor, scanner).
+craftable(qubits, black_hole, quantum_computer).
 
 % Exchangable objects
-exchange(stone, kathri, iron).
+%exchange(stone, kathri, iron).
 
 % Technologies
+technology(shield).
 technology(hyperdrive).
+technology(antimatter).
+technology(scanner).
+technology(quantum_computer).
 
 
 /* This rule takes you back to starting position and leaves new NPC on the current planet. */
@@ -288,7 +317,7 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
+        write('You successfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
         !,
         check_technology(Product).
 
@@ -299,7 +328,7 @@ combine(Object1, Object2) :-
         retract(holding(Object1)),
         retract(holding(Object2)),
         assert(holding(Product)),
-        write('You succesfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
+        write('You successfully combined '), write(Object1), write(' and '), write(Object2), write(' into '), write(Product), write('.'), nl,
         !,
         check_technology(Product).
 
@@ -316,7 +345,7 @@ give(Object, Person) :-
         exchange(Object, Person, Given),
         retract(holding(Object)),
         assert(holding(Given)),
-        write('You succesfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl,
+        write('You successfully exchanged '), write(Object), write(' for '), write(Given), write('.'), nl,
         !,
         check_technology(Given).
 
@@ -342,8 +371,17 @@ e :- go(e).
 
 w :- go(w).
 
+origin :- go(origin).
 
 /* This rule tells how to move in a given direction. */
+
+go(Direction) :-
+        start_fuel(13),
+        Direction == origin,
+        i_am_at(Here),
+        retract(i_am_at(Here)),
+        assert(i_am_at(origin)),
+        !, look.
 
 go(Direction) :-
         fuel(Quantity),
@@ -421,7 +459,7 @@ instructions :-
         write('drop(Object).      -- to put down an object.'), nl,
         write('inv.               -- to check what items you are holding.'), nl,
         write('combine(O1, O2).   -- to combine two items together.'), nl,
-        write('talk(NPC)          -- to talk to an NPC.'), nl,
+        write('talk(NPC).         -- to talk to an NPC.'), nl,
         write('look.              -- to look around you again.'), nl,
         write('check_fuel.        -- to check how much fuel you have.'), nl,
         write('restart.           -- to settle on the current planet and start again.'), nl,
@@ -476,44 +514,70 @@ describe(nymphs) :- write('You are on Nymphs, a small planet on which you can fi
 describe(pandora) :- write('You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.'), nl.
 describe(sileni) :- write('You are on Sileni. It is a moon of the capital planet of your galaxy Sol. People on Sol had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Sol.'), nl.
 
+% Endgame
+describe(origin) :- write('Wow, you did it! You left your Galaxy! In the distance you see a very bright point growing and growing with every moment. Is it a place where creatures which are responsible for your existence live?  PIP…PIP… What is that? PIP… INTERNAL SYSTEM ERROR. BUUUM!!! (your spaceship exploded and you died - it turned out that a software engineer who was partially responsible for kernel code in system of your spaceship was not in fact a real engineer and messed up code responsible for taking care of pressure in gas tanks - this was a direct cause of an explosion: bug in code that caused the pressure in gas tanks to raise too much and too fast) :('), nl.
+
 /* These rules write how much fuel the player has. */
 read_fuel(0) :- write('You don''t have any fuel.'), !, nl.
 read_fuel(X) :- write('You have '), write(X), write(' fuel'), nl.
 
 /* These rules write NPC dialogue. */
-speak(hardy) :- write('Hi my name is Hardy Carte'), !, nl.
-speak(jamy) :- write('Hi my name is Jamy Mithy'), !, nl.
-speak(arler) :- write('Hi my name is Arler Harra'), !, nl.
-speak(dave) :- write('Hi my name is Dave Dezal'), !, nl.
-speak(ryany) :- write('Hi my name is Ryany Gonzal'), !, nl.
-speak(jery) :- write('Hi my name is Jery Bailey'), !, nl.
-speak(brusse) :- write('Hi my name is Brusse Arkes'), !, nl.
-speak(stimy) :- write('Hi my name is Stimy Jackson'), !, nl.
-speak(patry) :- write('Hi my name is Patry Preeders'), !, nl.
-speak(jimmy) :- write('Hi my name is Jimmy Carte'), !, nl.
-speak(johnne) :- write('Hi my name is Johnne Reson'), !, nl.
-speak(aandond) :- write('Hi my name is Aandond Greeders'), !, nl.
-speak(walter) :- write('Hi my name is Walter Aker'), !, nl.
-speak(phelly) :- write('Hi my name is Phelly Perry'), !, nl.
-speak(reby) :- write('Hi my name is Reby Clore'), !, nl.
-speak(anget) :- write('Hi my name is Angnet Bennez'), !, nl.
-speak(thera) :- write('Hi my name is Thera Homart'), !, nl.
-speak(linda) :- write('Hi my name is Linda Wellee'), !, nl.
-speak(jana) :- write('Hi my name is Jana Rowner'), !, nl.
-speak(jula) :- write('Hi my name is Jula Andell'), !, nl.
-speak(lyna) :- write('Hi my name is Lyna Tewood'), !, nl.
-speak(mara) :- write('Hi my name is Mara Campbell'), !, nl.
-speak(cathy) :- write('Hi my name is Cathy Moore'), !, nl.
-speak(athen) :- write('Hi my name is Athen Tinez'), !, nl.
-speak(sarie) :- write('Hi my name is Sarie Halley'), !, nl.
-speak(lica) :- write('Hi my name is Lica Phardson'), !, nl.
+speak(hardy) :- write('Hi! Are you from Eo? Yes? So cool, I have half of my family there. My name is Hardy. I call myself an adventurer, although I have never been outside of our solar system. Well… But you know what? Maybe you will help me out in my escape from this galaxy? I am so hungry for travel which I cannot afford. You are really trying to build this superb spaceship? So cool!!! I can even help you! I know about the Hyperdrive schema - I was an engineer… Before they threw me out of my company and took all the titles. So... You need a Reinforced Steel and Electromagnetic Generator. I have one more hint for you. If you were in need of a Gold-Plated Microchip, you would have to go to Fates where they have a small factory of these rare components.'), !, nl.
+speak(jamy) :- write('Hello! Welcome on Somnus! I am Jame. Do you remember me? Yes? So cool. I am not going to waste your time. Good luck in your search!'), !, nl.
+speak(arler) :- write('Welcome to Fates. Even though there are not many of us, we still were able to hold those barbarians from Hecate off of our precious resources. It is just information for you and you should share it with other travelers. And remember… We are the best friends for our friends and the greatest enemies for our enemies. In an act of goodwill, we are going to share with you our schema for Hyperdrive. Listen carefully. In order to construct this advanced piece of equipment, you need to obtain Reinforced Steel and Electromagnetic Generator. Good luck in your search!'), !, nl.
+speak(dave) :- write('Hi! What an extraordinary meeting! I thought that you are already out there exploring other galaxies. Well… I wish you good luck. Come back again if you have free time.'), !, nl.
+speak(ryany) :- write('Hi!!! Super nice to meet you again. Merope is such an amazing planet. You will never be bored here ever again. Maybe you should consider settling down here.'), !, nl.
+speak(jery) :- write('Hello. How is your family doing back there on Eo? Good? Excellent! Okay, I am not going to bother you anymore. Good luck on your journey!'), !, nl.
+speak(brusse) :- write('Hi! I am Brusse. Welcome to Electra. You should not stay here longer than you need to. Those crazy storms are extraordinarily dangerous. I do not live here. Just… I am just staying for one night, he he. What you need? Are you looking for Exotic Particle? I heard about it from locals that traveled north of Electra. Well, I do not know anything more about it.'), !, nl.
+speak(stimy) :- write('Hey! Welcome on Demete. Nice to see you again, this time in better shape, ha ha.'), !, nl.
+speak(patry) :- write('Welcome to Enyo, old friend. How is your search going on? Good? Nice to hear that!'), !, nl.
+speak(jimmy) :- write('Hi! How are you? Did you find what you had been looking for? You are in hurry, I see. Well, I am not going to bother you then. See you again.'), !, nl.
+speak(johnne) :- write('Hi! Nice to see you again. Will you stay this time a bit longer?'), !, nl.
+speak(walter) :- write('Hi! Do you remember me? We met on Eo in this popular bar. Yeah! Exactly there! Okay, I wish you luck, friend.'), !, nl.
+speak(phelly) :- write('Hello! I am Phelly Perry from Eosian ATF bureau and I wish you good luck in your adventure. I have something less official to tell you. Listen… We recently captured a smuggler on our outer frontier and he was in possession of something you may find very helpful. Look, I do you a favor  and maybe one day you will be able to repay me in one way or another, ha, ha. So I have a schema of Deflective Shield for you. You need Nanoparticle Coolant and Gold-Plated Microchip in order to create it.'), !, nl.
+speak(reby) :- write('Hey! Nice to see you again! Are you still trying to find all those components? Good luck!'), !, nl.
+speak(angnet) :- write('Hello traveler! I am Angnet. You will find nothing and nothing here. So I have no idea why you come to our planet. Nevertheless, welcome. You are in search of Platinum Circuit, he? That’s good. Because there are many people coming here from far North that have those rare chips implanted in their skulls. Crazy! Those chips cost a small fortune. Unfortunately, I cannot afford them. If I had, I would not live on this deserted planet, ehhh…'), !, nl.
+speak(thera) :- write('Hello. Do I know where to get Platinum Circuit? Well, of course I do. You need to order them online. They are pretty expensive so I do not know if you can afford them. Personally, I have one of them. I am a well-established lawyer and… Have I mentioned that I am a lawyer? Yes? Good! Do I know where those chips come from? Of course, they are from Sileni. Where is this place? Ummm… I have no idea. Sorry, I have to go.'), !, nl.
+speak(linda) :- write('Welcome! My name is Linda. You are my guest now. Unfortunately, not many people visit us. Our planet is so beautiful and untamed. It is heaven! What are you looking for? Deep Space Scanner? Hmmm… Why do you need that? Are you planning an escape from our galaxy? Really? Wow!!! Okay, I think you are a good person so I will tell you. To build a Deep Space Scanner, you first need to get a Platinum Circuit and Microprocessor. I hope it helped, see ya!'), !, nl.
+speak(jana) :- write('Hi, traveler! I heard your ship. Pretty loud landing, ha ha. I know what you are looking for and might be able to help you. I have some distant relatives on Castor, which is located east of Atlas, and a few weeks ago a merchant spaceship made a hard landing there. Pretty loud bang, you know, ha, ha. There are many useful things laying around. Maybe even Electromagnetic Generator… Who knows?'), !, nl.
+speak(jula) :- write('Hi! How are you? Would you like to settle here? Castor is a wonderful place. No? Well, good luck then.'), !, nl.
+speak(lyna) :- write('Hi, old friend. You still cannot find your own place, huh?'), !, nl.
+speak(mara) :- write('Hello, lone traveller! We meet again. I am Mara. Do you remember me?'), !, nl.
+speak(cathy) :- write('Brother, help me out! I am stuck on this frozen planet! Wait…'), !, nl.
+speak(athen) :- write('Hey! Welcome back to Euterpe! What a journey it was. I did not find what I was looking for, but I found peace. I wish you the same, brother.'), !, nl.
+speak(sarie) :- write('Hello, old comrade. What a beautiful place to meet again.'), !, nl.
+speak(lica) :- write('Hi! Welcome to my home. I am Lica. I heard from my friends from other planets that there is a lone traveler looking for strange things in the whole galaxy. Is that you? Superb! You are pretty famous. At least in a circle of my friends, ha, ha, ha. What do you need. I might be able to help you. Quantum Computer schema? Well… Good for you, because my husband is working as a researcher in Sol National Institute. Wait a minute… I will find a schema. Here you go! (Schema: Components: Sealed Micro Black Hole + Cluster of Qubit)'), !, nl.
 
-speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I’m glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. I wish you good luck in your journey!'), !, nl.
+speak(kathri) :- write('Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I''m glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. Explore, find new technology and maybe you would even meet someone that will help you. I wish you good luck in your journey!'), !, nl.
 
 /* These rules execute effect of acquiring new technology */
+
+execute_technology(shield) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(5)),
+        write('You acquired Deflector Shield, you will now have 5 fuel after restarting'), !, nl.
 
 execute_technology(hyperdrive) :-
         start_fuel(Quantity),
         retract(start_fuel(Quantity)),
         assert(start_fuel(7)),
         write('You acquired Hyperdrive, you will now have 7 fuel after restarting'), !, nl.
+
+execute_technology(antimatter) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(9)),
+        write('You acquired Antiamter Fuel, you will now have 9 fuel after restarting'), !, nl.
+
+execute_technology(scanner) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(11)),
+        write('You acquired Deep Space Scanner, you will now have 11 fuel after restarting'), !, nl.
+
+execute_technology(quantum_computer) :-
+        start_fuel(Quantity),
+        retract(start_fuel(Quantity)),
+        assert(start_fuel(13)),
+        write('You acquired Quantum Computer, you can now reach origin of the Signal. Type: origin.'), !, nl.
