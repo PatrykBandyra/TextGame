@@ -4,6 +4,7 @@ instructionsText = [
     "Available commands are:",
     "",
     "instructions  -- to see these instructions.",
+    "n s e w       -- to go in that direction",
     "quit          -- to end the game and quit.",
     ""
     ]
@@ -12,6 +13,17 @@ type Pos = (Int, Int)
 
 data Move = North | South | East | West deriving Eq
 
+type State = (Pos, Int)
+
+-- Gets Pos from State
+getPos :: State -> Pos
+getPos (pos, _) = pos
+
+-- Gets Fuel from State
+getFuel :: State -> Int
+getFuel (_, fuel) = fuel
+
+-- Returns new Pos or Nothing if there is nothing there            
 move :: Pos -> Move -> Maybe Pos
 move (x, y) North | y == maxY = Nothing
                   | otherwise = Just (x, y+1)
@@ -21,6 +33,31 @@ move (x, y) East  | x == maxX = Nothing
                   | otherwise = Just (x+1, y)
 move (x, y) West  | x == 0 = Nothing
                   | otherwise = Just (x-1, y)
+
+-- Go in chosen direction and return to gameLoop with new State
+go :: State -> Move -> IO ()
+go state dir = do if (getFuel state) == 0 then do
+                    printLines ["You don't have any fuel left.", ""]
+                    gameLoop state
+                  else do
+                    let pos = move (getPos state) dir in
+                        case pos of
+                            Nothing -> do
+                                printLines ["You can't go there.", ""]
+                                gameLoop state
+                            Just a ->
+                                let newState = (a, (getFuel state) -1) in
+                                    do printLines (lookAround newState)
+                                       gameLoop newState
+
+-- Look around and check fuel
+lookAround :: State -> [String]
+lookAround (pos, fuel) = [description $ planet $ pos, readFuel fuel]
+
+-- Read fuel value
+readFuel :: Int -> String
+readFuel fuel | fuel == 0 = "You don't have any fuel.\n"
+              | otherwise = "You have " ++ show fuel ++ " fuel left.\n"
 
 -- print strings from list in separate lines
 printLines :: [String] -> IO ()
@@ -34,27 +71,35 @@ readCommand = do
     xs <- getLine
     return xs
 
-currentPos = (0::Int, 0::Int)
-maxY = 5
-maxX = 5
+-- map size
+maxY = 4
+maxX = 4
+
+
+startingState = ((0::Int, 0::Int), 3)
 
 -- note that the game loop may take the game state as
 -- an argument, eg. gameLoop :: State -> IO ()
-gameLoop :: IO ()
-gameLoop = do
+gameLoop :: State -> IO ()
+gameLoop state = do
     cmd <- readCommand
     case cmd of
         "instructions" -> do printInstructions
-                             gameLoop
+                             gameLoop state
+        "n" -> go state North
+        "s" -> go state South
+        "e" -> go state East
+        "w" -> go state West
         "quit" -> return ()
         _ -> do printLines ["Unknown command.", ""]
-                gameLoop
+                gameLoop state
 
 main = do
     printInstructions
-    putStr $ description $ planet currentPos
-    gameLoop
+    printLines (lookAround startingState)
+    gameLoop startingState
 
+-- Planet names
 planet :: Pos -> String
 planet (0, 0) = "Eo"
 planet (0, 1) = "Auster"
@@ -82,6 +127,7 @@ planet (4, 2) = "Nymphs"
 planet (4, 3) = "Pandora"
 planet (4, 4) = "Sileni"
 
+-- Planet desciptions
 description :: String -> String
 description "Eo"       = "You are on your home planet Eo.\n"
 description "Auster"    = "You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can''t see much because the view is obstructed by all the skyscrapers.\n"
