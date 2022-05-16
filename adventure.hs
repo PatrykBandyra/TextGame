@@ -5,6 +5,7 @@ instructionsText = [
     "",
     "instructions  -- to see these instructions.",
     "n s e w       -- to go in that direction",
+    "restart       -- to settle on the current planet and start again.",
     "quit          -- to end the game and quit.",
     ""
     ]
@@ -13,15 +14,19 @@ type Pos = (Int, Int)
 
 data Move = North | South | East | West deriving Eq
 
-type State = (Pos, Int)
+type State = (Pos, Int, Int)
 
 -- Gets Pos from State
 getPos :: State -> Pos
-getPos (pos, _) = pos
+getPos (pos, _, _) = pos
 
 -- Gets Fuel from State
 getFuel :: State -> Int
-getFuel (_, fuel) = fuel
+getFuel (_, fuel, _) = fuel
+
+-- Gets Starting fuel from State
+getStartingFuel :: State -> Int
+getStartingFuel (_, _, startingFuel) = startingFuel
 
 -- Returns new Pos or Nothing if there is nothing there            
 move :: Pos -> Move -> Maybe Pos
@@ -46,13 +51,13 @@ go state dir = do if (getFuel state) == 0 then do
                                 printLines ["You can't go there.", ""]
                                 gameLoop state
                             Just a ->
-                                let newState = (a, (getFuel state) -1) in
+                                let newState = (a, (getFuel state) -1, getStartingFuel state) in
                                     do printLines (lookAround newState)
                                        gameLoop newState
 
 -- Look around and check fuel
 lookAround :: State -> [String]
-lookAround (pos, fuel) = [description $ planet $ pos, readFuel fuel]
+lookAround (pos, fuel, _) = [description $ planet $ pos, readFuel fuel]
 
 -- Read fuel value
 readFuel :: Int -> String
@@ -76,7 +81,7 @@ maxY = 4
 maxX = 4
 
 
-startingState = ((0::Int, 0::Int), 3)
+startingPos = (0::Int, 0::Int)
 
 -- note that the game loop may take the game state as
 -- an argument, eg. gameLoop :: State -> IO ()
@@ -90,14 +95,20 @@ gameLoop state = do
         "s" -> go state South
         "e" -> go state East
         "w" -> go state West
+        "restart" -> do printLines ["You decided to settle on this planet and guide any future travellers that will meet you..", ""]
+                        let fuel = getStartingFuel state
+                            newState = (startingPos, fuel, fuel) in
+                            do printLines (lookAround newState)
+                               gameLoop newState
         "quit" -> return ()
         _ -> do printLines ["Unknown command.", ""]
                 gameLoop state
 
 main = do
     printInstructions
-    printLines (lookAround startingState)
-    gameLoop startingState
+    let newState = (startingPos, 3, 3) in
+        do printLines (lookAround newState)
+           gameLoop newState
 
 -- Planet names
 planet :: Pos -> String
