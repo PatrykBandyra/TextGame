@@ -23,50 +23,8 @@ data Move = North | South | East | West deriving Eq
 -- Current Pos, Fuel, Starting Fuel, Items in inventory, Rooms
 type State = (Pos, Int, Int, [String], [Room])
 
--- Gets Pos from State
-getPos :: State -> Pos
-getPos (pos, _, _, _, _) = pos
-
--- Gets Fuel from State
-getFuel :: State -> Int
-getFuel (_, fuel, _, _, _) = fuel
-
--- Gets Starting fuel from State
-getStartingFuel :: State -> Int
-getStartingFuel (_, _, startingFuel, _, _) = startingFuel
-
--- Gets Inventory from State
-getInventory :: State -> [String]
-getInventory (_, _, _, inv, _) = inv
-
--- Gets Rooms from State 
-getRooms :: State -> [Room]
-getRooms (_, _, _, _, rooms) = rooms
-
-
 -- Name, Position, Items, NPCs, Description
 type Room = (String, Pos, [String], [String], String)
-
--- Gets Name from Room
-getName :: Room -> String
-getName (name, _, _, _, _) = name
-
--- Gets Pos from Room
-getRoomPos :: Room -> Pos
-getRoomPos (_, pos, _, _, _) = pos
-
--- Gets Items from Room
-getItems :: Room -> [String]
-getItems (_, _, items, _, _) = items
-
--- Gets NPCs from Room
-getNPCs :: Room -> [String]
-getNPCs (_, _, _, npcs, _) = npcs
-
--- Gets Description from Room
-getDescription :: Room -> String
-getDescription (_, _, _, _, description) = description
-
 
 -- Find Room in the list by its Pos
 findRoomByPos :: Pos -> [Room] -> Room
@@ -90,20 +48,19 @@ move (x, y) West  | x == 0 = Nothing
 
 -- Go in chosen direction and return to gameLoop with new State
 go :: State -> Move -> IO ()
-go state dir = do if (getFuel state) == 0 then do
-                    printLines ["You don't have any fuel left.", ""]
-                    gameLoop state
-                  else do
-                    let pos = move (getPos state) dir in
-                        case pos of
-                            Nothing -> do
-                                printLines ["You can't go there.", ""]
-                                gameLoop state
-                            Just a ->
-                                let newState = (a, (getFuel state) -1, getStartingFuel state, getInventory state, getRooms state) in
-                                    do printLookAround newState
-                                       printFuel newState
-                                       gameLoop newState
+go state dir = let (pos, fuel, sfuel, inv, rooms) = state in 
+                   do if fuel == 0 then
+                        do printLines ["You don't have any fuel left.", ""]
+                           gameLoop state
+                      else
+                        do let newPos = move pos dir in
+                               case newPos of
+                                   Nothing -> do printLines ["You can't go there.", ""]
+                                                 gameLoop state
+                                   Just a -> let newState = (a, fuel -1, sfuel, inv, rooms) in
+                                                 do printLookAround newState
+                                                    printFuel newState
+                                                    gameLoop newState
 
 -- Pick up an item from the ground
 takeItem :: State -> String -> IO ()
@@ -148,9 +105,11 @@ printInstructions = printLines instructionsText
 
 -- print Look around
 printLookAround :: State -> IO ()
-printLookAround (pos, _, _, _, rooms) = let room = findRoomByPos pos rooms in
-                                            do printLines [getDescription room]
-                                               printItems $ getItems room
+printLookAround state = let (pos, _, _, _, rooms) = state
+                            room = findRoomByPos pos rooms 
+                            (_, _, items, _, desc) = room in
+                            do printLines [desc]
+                               printItems items
 
 -- print fuel value
 printFuel :: State -> IO ()
@@ -202,8 +161,8 @@ gameLoop state = do
                      do printInventory items
                         gameLoop state
         "restart" -> do printLines ["You decided to settle on this planet and guide any future travellers that will meet you.", ""]
-                        let fuel = getStartingFuel state
-                            newState = (startingPos, fuel, fuel, getInventory state, getRooms state) in
+                        let (pos, fuel, startingFuel, inv, rooms) = state
+                            newState = (startingPos, startingFuel, startingFuel, inv, rooms) in
                             do printLookAround newState
                                printFuel newState
                                gameLoop newState
