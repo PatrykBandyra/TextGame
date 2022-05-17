@@ -1,11 +1,15 @@
 -- The germ of a text adventure game
+import Data.List
 
 instructionsText = [
     "Available commands are:",
     "",
     "n s e w       -- to go in that direction",
+    "take item     -- to pick up an item.",
+    "drop item     -- to drop an item.",
     "look          -- to look around you again.",
     "fuel          -- to check how much fuel you have.",
+    "inv           -- to check what items you are holding.",
     "restart       -- to settle on the current planet and start again.",
     "instructions  -- to see these instructions.",
     "quit          -- to end the game and quit.",
@@ -78,7 +82,7 @@ move :: Pos -> Move -> Maybe Pos
 move (x, y) North | y == maxY = Nothing
                   | otherwise = Just (x, y+1)
 move (x, y) South | y == 0 = Nothing
-                  | otherwise = Just (x, y-11)
+                  | otherwise = Just (x, y-1)
 move (x, y) East  | x == maxX = Nothing
                   | otherwise = Just (x+1, y)
 move (x, y) West  | x == 0 = Nothing
@@ -101,6 +105,40 @@ go state dir = do if (getFuel state) == 0 then do
                                        printFuel newState
                                        gameLoop newState
 
+-- Pick up an item from the ground
+takeItem :: State -> String -> IO ()
+takeItem state item = let (pos, fuel, sfuel, inv, rooms) = state
+                          room = findRoomByPos pos rooms
+                          (name, roomPos, items, npcs, desc) = room in
+                          if elem item inv then
+                             do printLines ["You are already holding it.\n"]
+                                gameLoop state
+                          else
+                             if elem item items then
+                                let newItems = delete item items
+                                    newInv = insert item inv 
+                                    newRooms = insert (name, roomPos, newItems, npcs, desc) (delete room rooms) in
+                                    do printLines ["OK\n"]
+                                       gameLoop (pos, fuel, sfuel, newInv, newRooms)
+                             else
+                                 do printLines ["There is no " ++ id item ++ " here.\n"]
+                                    gameLoop state
+
+-- Drop an item on the ground
+dropItem :: State -> String -> IO ()
+dropItem state item = let (pos, fuel, sfuel, inv, rooms) = state
+                          room = findRoomByPos pos rooms
+                          (name, roomPos, items, npcs, desc) = room in
+                          if elem item inv then
+                             let newItems = insert item items
+                                 newInv = delete item inv
+                                 newRooms = insert (name, roomPos, newItems, npcs, desc) (delete room rooms) in
+                                 do printLines ["OK\n"]
+                                    gameLoop (pos, fuel, sfuel, newInv, newRooms)
+                          else
+                              do printLines ["You are not holding " ++ id item ++ ".\n"]
+                                 gameLoop state
+
 
 -- print strings from list in separate lines
 printLines :: [String] -> IO ()
@@ -110,12 +148,26 @@ printInstructions = printLines instructionsText
 
 -- print Look around
 printLookAround :: State -> IO ()
-printLookAround (pos, _, _, _, rooms) = do printLines [getDescription $ findRoomByPos pos rooms]
+printLookAround (pos, _, _, _, rooms) = let room = findRoomByPos pos rooms in
+                                            do printLines [getDescription room]
+                                               printItems $ getItems room
 
 -- print fuel value
 printFuel :: State -> IO ()
 printFuel (_, fuel, _, _, _) | fuel == 0 = do printLines ["You don't have any fuel.\n"]
                              | otherwise = do printLines ["You have " ++ show fuel ++ " fuel left.\n"]
+
+-- print items lying on the ground
+printItems :: [String] -> IO ()
+printItems [] = return ()
+printItems (x:xs) = do printLines ["There is a/an " ++ id x ++ " here.\n"]
+                       printItems xs
+
+-- print items in the inventory
+printInventory :: [String] -> IO ()
+printInventory [] = return ()
+printInventory (x:xs) = do printLines ["You have a/an " ++ id x ++ ".\n"]
+                           printInventory xs
 
 readCommand :: IO String
 readCommand = do
@@ -140,10 +192,15 @@ gameLoop state = do
         "s" -> go state South
         "e" -> go state East
         "w" -> go state West
+        ('t':'a':'k':'e':' ':xs) -> do takeItem state xs
+        ('d':'r':'o':'p':' ':xs) -> do dropItem state xs
         "look" -> do printLookAround state
                      gameLoop state
         "fuel" -> do printFuel state
                      gameLoop state
+        "inv" -> let (_, _, _, items, _) = state in
+                     do printInventory items
+                        gameLoop state
         "restart" -> do printLines ["You decided to settle on this planet and guide any future travellers that will meet you.", ""]
                         let fuel = getStartingFuel state
                             newState = (startingPos, fuel, fuel, getInventory state, getRooms state) in
