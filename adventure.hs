@@ -34,6 +34,8 @@ findRoomByPos pos (x:xs) = let (_, p, _, _, _) = x in
                                   x
                                else
                                   findRoomByPos pos xs
+-- NPC, Dialog
+type Dialog = (String, String)
 
 -- Returns new Pos or Nothing if there is nothing there            
 move :: Pos -> Move -> Maybe Pos
@@ -205,3 +207,31 @@ rooms = [
     ("Nymphs",      (4, 2),      [],                ["Sarie"],                  "You are on Nymphs, a small planet on which you can find the biggest and most famous nightclubs. The upper class of Orion comes here to get high and cheat on their significant others.\n"),
     ("Pandora",     (4, 3),      ["particle"],      ["Walter"],                 "You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.\n"),
     ("Sileni",      (4, 4),      ["circuit"],       ["Lica"],                   "You are on Sileni. It is a moon of the capital planet of your galaxy Orion. People on Orion had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Orion.\n")]
+
+dialogs = [
+    ("Hardy", "Hi! Are you from Eo? Yes? So cool, I have half of my family there. My name is Hardy. I call myself an adventurer, although I have never been outside of our solar system. Well… But you know what? Maybe you will help me out in my escape from this galaxy? I am so hungry for travel which I cannot afford. You are really trying to build this superb spaceship? So cool!!! I can even help you! I know about the Hyperdrive schema - I was an engineer… Before they threw me out of my company and took all the titles. So... You need a Reinforced Steel and Electromagnetic Generator. I have one more hint for you. If you were in need of a Gold-Plated Microchip, you would have to go to Fates where they have a small factory of these rare components."),
+    ("Jamy", "Hello! Welcome on Somnus! I am Jame. Do you remember me? Yes? So cool. I am not going to waste your time. Good luck in your search!"),
+    ("Arler", "Welcome to Fates. Even though there are not many of us, we still were able to hold those barbarians from Hecate off of our precious resources. It is just information for you and you should share it with other travelers. And remember… We are the best friends for our friends and the greatest enemies for our enemies. In an act of goodwill, we are going to share with you our schema for Hyperdrive. Listen carefully. In order to construct this advanced piece of equipment, you need to obtain Reinforced Steel and Electromagnetic Generator. Good luck in your search!"),
+    ("Dave", "Hi! What an extraordinary meeting! I thought that you are already out there exploring other galaxies. Well… I wish you good luck. Come back again if you have free time."),
+    ("Ryany", "Hi!!! Super nice to meet you again. Merope is such an amazing planet. You will never be bored here ever again. Maybe you should consider settling down here."),
+    ("Jery", "Hello. How is your family doing back there on Eo? Good? Excellent! Okay, I am not going to bother you anymore. Good luck on your journey!"),
+    ("Brusse", "Hi! I am Brusse. Welcome to Electra. You should not stay here longer than you need to. Those crazy storms are extraordinarily dangerous. I do not live here. Just… I am just staying for one night, he he. What you need? Are you looking for Exotic Particle? I heard about it from locals that traveled north of Electra. Well, I do not know anything more about it."),
+    ("Stimy", "Hey! Welcome on Demete. Nice to see you again, this time in better shape, ha ha."),
+    ("Patry", "Welcome to Enyo, old friend. How is your search going on? Good? Nice to hear that!"),
+    ("Jimmy", "Hi! How are you? Did you find what you had been looking for? You are in hurry, I see. Well, I am not going to bother you then. See you again."),
+    ("Johnne", "Hi! Nice to see you again. Will you stay this time a bit longer?"),
+    ("Walter", "Hi! Do you remember me? We met on Eo in this popular bar. Yeah! Exactly there! Okay, I wish you luck, friend."),
+    ("Phelly", "Hello! I am Phelly Perry from Eosian ATF bureau and I wish you good luck in your adventure. I have something less official to tell you. Listen… We recently captured a smuggler on our outer frontier and he was in possession of something you may find very helpful. Look, I do you a favor  and maybe one day you will be able to repay me in one way or another, ha, ha. So I have a schema of Deflective Shield for you. You need Nanoparticle Coolant and Gold-Plated Microchip in order to create it."),
+    ("Reby", "Hey! Nice to see you again! Are you still trying to find all those components? Good luck!"),
+    ("Angnet", "Hello traveler! I am Angnet. You will find nothing and nothing here. So I have no idea why you come to our planet. Nevertheless, welcome. You are in search of Platinum Circuit, he? That’s good. Because there are many people coming here from far North that have those rare chips implanted in their skulls. Crazy! Those chips cost a small fortune. Unfortunately, I cannot afford them. If I had, I would not live on this deserted planet, ehhh…"),
+    ("Thera", "Hello. Do I know where to get Platinum Circuit? Well, of course I do. You need to order them online. They are pretty expensive so I do not know if you can afford them. Personally, I have one of them. I am a well-established lawyer and… Have I mentioned that I am a lawyer? Yes? Good! Do I know where those chips come from? Of course, they are from Sileni. Where is this place? Ummm… I have no idea. Sorry, I have to go."),
+    ("Linda", "Welcome! My name is Linda. You are my guest now. Unfortunately, not many people visit us. Our planet is so beautiful and untamed. It is heaven! What are you looking for? Deep Space Scanner? Hmmm… Why do you need that? Are you planning an escape from our galaxy? Really? Wow!!! Okay, I think you are a good person so I will tell you. To build a Deep Space Scanner, you first need to get a Platinum Circuit and Microprocessor. I hope it helped, see ya!"),
+    ("Jana", "Hi, traveler! I heard your ship. Pretty loud landing, ha ha. I know what you are looking for and might be able to help you. I have some distant relatives on Castor, which is located east of Atlas, and a few weeks ago a merchant spaceship made a hard landing there. Pretty loud bang, you know, ha, ha. There are many useful things laying around. Maybe even Electromagnetic Generator… Who knows?"),
+    ("Jula", "Hi! How are you? Would you like to settle here? Castor is a wonderful place. No? Well, good luck then."),
+    ("Lyna", "Hi, old friend. You still cannot find your own place, huh?"),
+    ("Mara", "Hello, lone traveller! We meet again. I am Mara. Do you remember me?"),
+    ("Cathy", "Brother, help me out! I am stuck on this frozen planet! Wait…"),
+    ("Athen", "Hey! Welcome back to Euterpe! What a journey it was. I did not find what I was looking for, but I found peace. I wish you the same, brother."),
+    ("Sarie", "Hello, old comrade. What a beautiful place to meet again."),
+    ("Lica", "Hi! Welcome to my home. I am Lica. I heard from my friends from other planets that there is a lone traveler looking for strange things in the whole galaxy. Is that you? Superb! You are pretty famous. At least in a circle of my friends, ha, ha, ha. What do you need. I might be able to help you. Quantum Computer schema? Well… Good for you, because my husband is working as a researcher in Sol National Institute. Wait a minute… I will find a schema. Here you go! (Schema: Components: Sealed Micro Black Hole + Cluster of Qubit)")
+]
