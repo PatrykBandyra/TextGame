@@ -34,8 +34,6 @@ findRoomByPos pos (x:xs) = let (_, p, _, _, _) = x in
                                   x
                                else
                                   findRoomByPos pos xs
--- NPC, Dialog
-type Dialog = (String, String)
 
 -- Returns new Pos or Nothing if there is nothing there            
 move :: Pos -> Move -> Maybe Pos
@@ -63,6 +61,31 @@ go state dir = let (pos, fuel, sfuel, inv, rooms) = state in
                                                  do printLookAround newState
                                                     printFuel newState
                                                     gameLoop newState
+
+-- NPC, Dialog
+type Dialog = (String, String)
+
+-- takes npc, dialogs and returns corresponding dialog
+findDialogByNPC :: String -> [Dialog] -> String
+findDialogByNPC npc [] = "ERROR"
+findDialogByNPC npc (x:xs) = let (npcName, dialog) = x in
+                                 if npc == npcName then
+                                     dialog
+                                 else
+                                     findDialogByNPC npc xs
+
+-- Make NPC speak if he/she is in a given room from given position
+speakTo :: String -> State -> IO ()
+speakTo npc state = let (pos, fuel, sfuel, inv, rooms) = state
+                        room = findRoomByPos pos rooms
+                        (name, roomPos, items, npcs, desc) = room in
+                        if elem npc npcs then
+                           let dialog = findDialogByNPC npc dialogs in
+                               do printLines [dialog]
+                                  gameLoop state
+                        else
+                            do printLines ["There is no " ++ id npc ++ " here.\n"]
+                               gameLoop state
 
 -- Pick up an item from the ground
 takeItem :: State -> String -> IO ()
@@ -109,10 +132,16 @@ printInstructions = printLines instructionsText
 printLookAround :: State -> IO ()
 printLookAround state = let (pos, _, _, _, rooms) = state
                             room = findRoomByPos pos rooms 
-                            (_, _, items, _, desc) = room in
+                            (_, _, items, npcs, desc) = room in
                             do printLines [desc]
                                printItems items
+                               printNPCs npcs
 
+-- print npcs
+printNPCs :: [String] -> IO ()
+printNPCs [] = return ()
+printNPCs (x:xs) = do printLines ["There is " ++ id x ++ " who you can speak to.\n"]
+                      printNPCs xs
 -- print fuel value
 printFuel :: State -> IO ()
 printFuel (_, fuel, _, _, _) | fuel == 0 = do printLines ["You don't have any fuel.\n"]
@@ -162,6 +191,7 @@ gameLoop state = do
         "inv" -> let (_, _, _, items, _) = state in
                      do printInventory items
                         gameLoop state
+        ('s':'p':'e':'a':'k':' ':xs) -> do speakTo xs state
         "restart" -> do printLines ["You decided to settle on this planet and guide any future travellers that will meet you.", ""]
                         let (pos, fuel, startingFuel, inv, rooms) = state
                             newState = (startingPos, startingFuel, startingFuel, inv, rooms) in
@@ -222,6 +252,7 @@ dialogs = [
     ("Johnne", "Hi! Nice to see you again. Will you stay this time a bit longer?"),
     ("Walter", "Hi! Do you remember me? We met on Eo in this popular bar. Yeah! Exactly there! Okay, I wish you luck, friend."),
     ("Phelly", "Hello! I am Phelly Perry from Eosian ATF bureau and I wish you good luck in your adventure. I have something less official to tell you. Listen… We recently captured a smuggler on our outer frontier and he was in possession of something you may find very helpful. Look, I do you a favor  and maybe one day you will be able to repay me in one way or another, ha, ha. So I have a schema of Deflective Shield for you. You need Nanoparticle Coolant and Gold-Plated Microchip in order to create it."),
+    ("Kathri", "Hello traveler! My name is Kathri and I am a commander chief of Eosian Space Program. I am glad to finally meet you. I was told that you had the highest grades in your year at Space Academy. That is really impressive. As such, you are the only suitable person for our newest mission. We received a strange signal from deep space. Our greatest scientists analyzed and concluded it could be connected with the origin of our species. I think you understand the importance of finding the source of that signal. We could learn the true nature of our origin. Your mission is to explore the space and reach the place where the signal came from. Explore, find new technology. Maybe you would even meet someone that will help you. I wish you good luck in your journey!"),
     ("Reby", "Hey! Nice to see you again! Are you still trying to find all those components? Good luck!"),
     ("Angnet", "Hello traveler! I am Angnet. You will find nothing and nothing here. So I have no idea why you come to our planet. Nevertheless, welcome. You are in search of Platinum Circuit, he? That’s good. Because there are many people coming here from far North that have those rare chips implanted in their skulls. Crazy! Those chips cost a small fortune. Unfortunately, I cannot afford them. If I had, I would not live on this deserted planet, ehhh…"),
     ("Thera", "Hello. Do I know where to get Platinum Circuit? Well, of course I do. You need to order them online. They are pretty expensive so I do not know if you can afford them. Personally, I have one of them. I am a well-established lawyer and… Have I mentioned that I am a lawyer? Yes? Good! Do I know where those chips come from? Of course, they are from Sileni. Where is this place? Ummm… I have no idea. Sorry, I have to go."),
@@ -233,5 +264,4 @@ dialogs = [
     ("Cathy", "Brother, help me out! I am stuck on this frozen planet! Wait…"),
     ("Athen", "Hey! Welcome back to Euterpe! What a journey it was. I did not find what I was looking for, but I found peace. I wish you the same, brother."),
     ("Sarie", "Hello, old comrade. What a beautiful place to meet again."),
-    ("Lica", "Hi! Welcome to my home. I am Lica. I heard from my friends from other planets that there is a lone traveler looking for strange things in the whole galaxy. Is that you? Superb! You are pretty famous. At least in a circle of my friends, ha, ha, ha. What do you need. I might be able to help you. Quantum Computer schema? Well… Good for you, because my husband is working as a researcher in Sol National Institute. Wait a minute… I will find a schema. Here you go! (Schema: Components: Sealed Micro Black Hole + Cluster of Qubit)")
-]
+    ("Lica", "Hi! Welcome to my home. I am Lica. I heard from my friends from other planets that there is a lone traveler looking for strange things in the whole galaxy. Is that you? Superb! You are pretty famous. At least in a circle of my friends, ha, ha, ha. What do you need. I might be able to help you. Quantum Computer schema? Well… Good for you, because my husband is working as a researcher in Sol National Institute. Wait a minute… I will find a schema. Here you go! (Schema: Components: Sealed Micro Black Hole + Cluster of Qubit)")]
