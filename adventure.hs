@@ -10,6 +10,7 @@ instructionsText = [
     "look          -- to look around you again.",
     "fuel          -- to check how much fuel you have.",
     "inv           -- to check what items you are holding.",
+    "speak person  -- to speak to a person on a planet", 
     "restart       -- to settle on the current planet and start again.",
     "instructions  -- to see these instructions.",
     "quit          -- to end the game and quit.",
