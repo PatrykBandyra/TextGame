@@ -87,6 +87,39 @@ speakTo npc state = let (pos, fuel, sfuel, inv, rooms) = state
                             do printLines ["There is no " ++ id npc ++ " here.\n"]
                                gameLoop state
 
+replaceRoom :: Room -> [Room] -> [Room]
+replaceRoom room [] = [("Error", (-1, -1), [], [], "Error")]
+replaceRoom room (x:xs) = let (name, _, _, _, _) = room
+                              (planetName, _, _, _, _) = x in
+                                  if name == planetName then
+                                      room:xs
+                                  else
+                                      x:replaceRoom room xs
+                        
+
+-- Maps planet - NPC
+type PlanetNPC = (String, String)
+
+-- Add dynamic NPC to a room after restart
+addNPC :: State -> [PlanetNPC] -> State
+addNPC state [] = state
+addNPC state (x:xs) = let (pos, fuel, sfuel, inv, rooms) = state
+                          room = findRoomByPos pos rooms
+                          (name, roomPos, items, npcs, desc) = room
+                          (planetName, npcName) = x in
+                              if planetName == name then
+                                  if elem npcName npcs then
+                                      state
+                                  else
+                                      let newNpcs = npcs ++ [npcName]
+                                          newRoom = (name, roomPos, items, newNpcs, desc)
+                                          newRooms = replaceRoom newRoom rooms
+                                          newState = (pos, fuel, sfuel, inv, newRooms) in
+                                            newState
+                              else
+                                   addNPC state xs
+
+
 -- Pick up an item from the ground
 takeItem :: State -> String -> IO ()
 takeItem state item = let (pos, fuel, sfuel, inv, rooms) = state
@@ -193,11 +226,12 @@ gameLoop state = do
                         gameLoop state
         ('s':'p':'e':'a':'k':' ':xs) -> do speakTo xs state
         "restart" -> do printLines ["You decided to settle on this planet and guide any future travellers that will meet you.", ""]
-                        let (pos, fuel, startingFuel, inv, rooms) = state
-                            newState = (startingPos, startingFuel, startingFuel, inv, rooms) in
-                            do printLookAround newState
-                               printFuel newState
-                               gameLoop newState
+                        let newState = addNPC state dynamic_npcs
+                            (pos, fuel, startingFuel, inv, rooms) = newState
+                            newState2 = (startingPos, startingFuel, startingFuel, inv, rooms) in
+                            do printLookAround newState2
+                               printFuel newState2
+                               gameLoop newState2
         "instructions" -> do printInstructions
                              gameLoop state
         "quit" -> return ()
@@ -214,29 +248,47 @@ main = do
 rooms = [
     ("Eo",          (0, 0),      [],                ["Phelly", "Kathri"],       "You are on your home planet Eo.\n"),
     ("Auster",      (0, 1),      ["coolant"],       ["Hardy"],                  "You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can''t see much because the view is obstructed by all the skyscrapers.\n"),
-    ("Artemi",      (0, 2),      [],                ["Reby"],                   "You are on Artemi, with your first glance you can see that it is not as populated as Eo or Artemi. There are a couple bigger cities here, but this planet mainly serves as a quarry for your home planet.\n"),
-    ("Somnus",      (0, 3),      [],                ["Jamy"],                   "You are on Somnus. It has almost no human inhabitants because the whole planet is covered in water, but there is a whole civilization living at the bottom of the ocean.\n"),
+    ("Artemi",      (0, 2),      [],                [],                         "You are on Artemi, with your first glance you can see that it is not as populated as Eo or Artemi. There are a couple bigger cities here, but this planet mainly serves as a quarry for your home planet.\n"),
+    ("Somnus",      (0, 3),      [],                [],                         "You are on Somnus. It has almost no human inhabitants because the whole planet is covered in water, but there is a whole civilization living at the bottom of the ocean.\n"),
     ("Leda",        (0, 4),      ["microprocesor"], ["Angnet"],                 "You are on Leda, a dwarf planet. The only thing that''s on this planet is a gas station.\n"),
     ("Fates",       (1, 0),      ["microchip"],     ["Arler"],                  "You are on Fates. It''s not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.\n"),
     ("Avernus",     (1, 1),      ["steel"],         ["Thera"],                  "You are on Avernus. It is a moon of planet Auster. There are a couple of smaller cities here, but nothing impressive because it still is a moon.\n"),
-    ("Cepheus",     (1, 2),      [],                ["Dave"],                   "You are on Cepheus, which is mostly covered in sand. The only inhabitants of this planet are sand people, because only they can survive the extreme temperatures for longer periods of time.\n"),
+    ("Cepheus",     (1, 2),      [],                [],                         "You are on Cepheus, which is mostly covered in sand. The only inhabitants of this planet are sand people, because only they can survive the extreme temperatures for longer periods of time.\n"),
     ("Flora",       (1, 3),      [],                ["Linda"],                  "You are on Flora. The whole planet is basically a huge rainforest. Not much is known about it. Because of many predators living here nobody wants to explore it deeper.\n"),
-    ("Merope",      (1, 4),      ["qubits"],        ["Ryany"],                  "You are on Merope. Most of its inhabitants are fugitives and criminals who are banished from their own planets. There is a huge casino here.\n"),
+    ("Merope",      (1, 4),      ["qubits"],        [],                         "You are on Merope. Most of its inhabitants are fugitives and criminals who are banished from their own planets. There is a huge casino here.\n"),
     ("Atlas",       (2, 0),      [],                ["Jana"],                   "You are on Atlas, the desert planet. Every civilization owns part of the planet, from which they harvest valuable spice.\n"),
-    ("Boreas",      (2, 1),      [],                ["Jery"],                   "You are on Boreas. It is a wasteland where there is a lot of garbage. In the past it was a battlefield for many wars, which ruined the whole planet.\n"),
-    ("Castor",      (2, 2),      ["generator"],     ["Jula"],                   "You are on Castor, the whole planet is covered in big mountains and hills, so it''s difficult to build a big civilization here. But under all that rock there are a ton of valuable resources which locals trade for spice.\n"),
+    ("Boreas",      (2, 1),      [],                [],                         "You are on Boreas. It is a wasteland where there is a lot of garbage. In the past it was a battlefield for many wars, which ruined the whole planet.\n"),
+    ("Castor",      (2, 2),      ["generator"],     [],                         "You are on Castor, the whole planet is covered in big mountains and hills, so it''s difficult to build a big civilization here. But under all that rock there are a ton of valuable resources which locals trade for spice.\n"),
     ("Electra",     (2, 3),      [],                ["Brusse"],                 "You are on Electra. It is said that the storm here stops for only one day in a month. As a result almost no one wants to live here and most of the people here are travelers.\n"),
-    ("Thanato",     (2, 4),      [],                ["Lyna"],                   "You are on Thanato. There are no animals or plants here, due to lack of natural reserves of water. Amazingly some people managed to survive on this planet, but only because of caravans bringing them necessary supplies, which they buy in exchange for fuel in which this planet is rich.\n"),
-    ("Demete",      (3, 0),      ["plasma"],        ["Stimy"],                  "You are on Demete. The whole planet is a beach paradise. It is covered in one big ocean with lots of little and big islands. The inhabitants are very friendly and are known for their hospitality.\n"),
-    ("Hade",        (3, 1),      [],                ["Mara"],                   "You are on Hade, the volcanic planet. It is almost uninhabitable because of many active volcanoes and lava that covers most of the planet. Despite such extreme conditions some people managed to call this place home.\n"),
-    ("Enyo",        (3, 2),      [],                ["Patry"],                  "You are on Enyo. For some reason it is known as the land of wind and shade. The only inhabitant of this planet is a weird species of yellow salamanders. There is still a lot to learn about this unusual planet filled with oil lakes.\n"),
-    ("Hecate",      (3, 3),      [],                ["Cathy"],                  "You are on Hecate, the frozen planet. There is really not much to it except for ice …. and snow.\n"),
-    ("Orion",       (3, 4),      [],                ["Jimmy"],                  "You are on Orion. It is the capital planet of your galaxy, similarly to your home planet it is mostly covered in skyscrapers. The locals can be quite eccentric, but nothing that you wouldn''t handle.\n"),
-    ("Eutrepe",     (4, 0),      ["black hole"],    ["Athen"],                  "You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.\n"),
-    ("Sol",         (4, 1),      [],                ["Johnne"],                 "You are on Sol. It is a colossal space station that was set up to study nearby star. With time it evolved to the size of a little city and is no longer used as a research facility.\n"),
-    ("Nymphs",      (4, 2),      [],                ["Sarie"],                  "You are on Nymphs, a small planet on which you can find the biggest and most famous nightclubs. The upper class of Orion comes here to get high and cheat on their significant others.\n"),
-    ("Pandora",     (4, 3),      ["particle"],      ["Walter"],                 "You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.\n"),
+    ("Thanato",     (2, 4),      [],                [],                         "You are on Thanato. There are no animals or plants here, due to lack of natural reserves of water. Amazingly some people managed to survive on this planet, but only because of caravans bringing them necessary supplies, which they buy in exchange for fuel in which this planet is rich.\n"),
+    ("Demete",      (3, 0),      ["plasma"],        [],                         "You are on Demete. The whole planet is a beach paradise. It is covered in one big ocean with lots of little and big islands. The inhabitants are very friendly and are known for their hospitality.\n"),
+    ("Hade",        (3, 1),      [],                [],                         "You are on Hade, the volcanic planet. It is almost uninhabitable because of many active volcanoes and lava that covers most of the planet. Despite such extreme conditions some people managed to call this place home.\n"),
+    ("Enyo",        (3, 2),      [],                [],                         "You are on Enyo. For some reason it is known as the land of wind and shade. The only inhabitant of this planet is a weird species of yellow salamanders. There is still a lot to learn about this unusual planet filled with oil lakes.\n"),
+    ("Hecate",      (3, 3),      [],                [],                         "You are on Hecate, the frozen planet. There is really not much to it except for ice …. and snow.\n"),
+    ("Orion",       (3, 4),      [],                [],                         "You are on Orion. It is the capital planet of your galaxy, similarly to your home planet it is mostly covered in skyscrapers. The locals can be quite eccentric, but nothing that you wouldn''t handle.\n"),
+    ("Eutrepe",     (4, 0),      ["black hole"],    [],                         "You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.\n"),
+    ("Sol",         (4, 1),      [],                [],                         "You are on Sol. It is a colossal space station that was set up to study nearby star. With time it evolved to the size of a little city and is no longer used as a research facility.\n"),
+    ("Nymphs",      (4, 2),      [],                [],                         "You are on Nymphs, a small planet on which you can find the biggest and most famous nightclubs. The upper class of Orion comes here to get high and cheat on their significant others.\n"),
+    ("Pandora",     (4, 3),      ["particle"],      [],                         "You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.\n"),
     ("Sileni",      (4, 4),      ["circuit"],       ["Lica"],                   "You are on Sileni. It is a moon of the capital planet of your galaxy Orion. People on Orion had problems with fitting on the planet, so they started migrating to its moon. It now acts as suburbs of Orion.\n")]
+
+dynamic_npcs = [   
+    ("Somnus", "Jamy"),
+    ("Cepheus", "Dave"),
+    ("Merope", "Ryany"),
+    ("Boreas", "Jery"),
+    ("Demete", "Stimy"),
+    ("Enyo", "Patry"),
+    ("Orion", "Jimmy"),
+    ("Sol", "Johnne"),
+    ("Pandora", "Walter"),
+    ("Artemi", "Reby"),
+    ("Jula", "Castor"),
+    ("Thanato", "Lyna"),
+    ("Hade", "Mara"),
+    ("Hecate", "Cathy"),
+    ("Euterpe", "Athen"),
+    ("Nymphs", "Sarie")]
 
 dialogs = [
     ("Hardy", "Hi! Are you from Eo? Yes? So cool, I have half of my family there. My name is Hardy. I call myself an adventurer, although I have never been outside of our solar system. Well… But you know what? Maybe you will help me out in my escape from this galaxy? I am so hungry for travel which I cannot afford. You are really trying to build this superb spaceship? So cool!!! I can even help you! I know about the Hyperdrive schema - I was an engineer… Before they threw me out of my company and took all the titles. So... You need a Reinforced Steel and Electromagnetic Generator. I have one more hint for you. If you were in need of a Gold-Plated Microchip, you would have to go to Fates where they have a small factory of these rare components."),
