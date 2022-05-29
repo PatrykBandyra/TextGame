@@ -1,19 +1,21 @@
 -- The germ of a text adventure game
 import Data.List
+import System.IO
 
 instructionsText = [
     "Available commands are:",
     "",
-    "n s e w       -- to go in that direction",
-    "take item     -- to pick up an item.",
-    "drop item     -- to drop an item.",
-    "look          -- to look around you again.",
-    "fuel          -- to check how much fuel you have.",
-    "inv           -- to check what items you are holding.",
-    "speak person  -- to speak to a person on a planet", 
-    "restart       -- to settle on the current planet and start again.",
-    "instructions  -- to see these instructions.",
-    "quit          -- to end the game and quit.",
+    "n s e w                -- to go in that direction",
+    "take item              -- to pick up an item.",
+    "drop item              -- to drop an item.",
+    "combine item1 item2    -- to combine items.",
+    "look                   -- to look around you again.",
+    "fuel                   -- to check how much fuel you have.",
+    "inv                    -- to check what items you are holding.",
+    "speak person           -- to speak to a person on a planet",
+    "restart                -- to settle on the current planet and start again.",
+    "instructions           -- to see these instructions.",
+    "quit                   -- to end the game and quit.",
     ""
     ]
 
@@ -155,6 +157,64 @@ dropItem state item = let (pos, fuel, sfuel, inv, rooms) = state
                               do printLines ["You are not holding " ++ id item ++ ".\n"]
                                  gameLoop state
 
+-- Check if items match any of the craftings
+craft :: [String] -> [[String]] -> Maybe String
+craft items [] = Nothing
+craft items recipes = let (recipe:remnants) = recipes
+                          result = recipe!!0
+                          ingredients = delete result recipe in
+                          if sort items == sort ingredients then
+                             Just result
+                          else
+                             craft items remnants
+
+-- Combine items in inventory
+combineItems :: State -> String -> IO ()
+combineItems state xs = let itemsToCombine = words xs
+                            (pos, fuel, sfuel, inv, rooms) = state
+                            room = findRoomByPos pos rooms
+                            (name, roomPos, items, npcs, desc) = room in
+                            if length itemsToCombine > 1 then
+                               if intersect itemsToCombine inv == itemsToCombine then
+                                  let newItem = craft itemsToCombine crafting in
+                                      case newItem of
+                                           Nothing -> do printLines ["You can't combine those items.\n"]
+                                                         gameLoop state
+                                           Just a -> let newInv = (inv \\ itemsToCombine) ++ [a]
+                                                         newRooms = insert (name, roomPos, items, npcs, desc) (delete room rooms) in
+                                                         do printLines ["OK\n"]
+                                                            gameLoop (pos, fuel, sfuel, newInv, newRooms)
+
+                               else
+                                   do printLines ["Some of the items you wish to combine are not in your inventory.\n"]
+                                      gameLoop state
+                            else
+                                do printLines ["You can only combine at least two items.\n"]
+                                   gameLoop state
+
+-- Drop all items on the ground
+dropAll :: State -> State
+dropAll state = let (pos, fuel, sfuel, inv, rooms) = state
+                    room = findRoomByPos pos rooms
+                    (name, roomPos, items, npcs, desc) = room in
+                    if inv == [] then
+                       state
+                    else
+                       let (item:xs) = inv
+                           newItems = insert item items
+                           newInv = delete item inv
+                           newRooms = insert (name, roomPos, newItems, npcs, desc) (delete room rooms) in
+                           do dropAll (pos, fuel, sfuel, newInv, newRooms)
+
+-- Drop all items on the ground and restart the game
+restart :: State -> IO()
+restart state = do printLines ["You decided to settle on this planet and guide any future travellers that will meet you.", ""]
+                   let newState = addNPC (dropAll state) dynamic_npcs
+                       (pos, fuel, startingFuel, inv, rooms) = newState
+                       newState2 = (startingPos, startingFuel, startingFuel, inv, rooms) in
+                       do printLookAround newState2
+                          printFuel newState2
+                          gameLoop newState2
 
 -- print strings from list in separate lines
 printLines :: [String] -> IO ()
@@ -195,6 +255,7 @@ printInventory (x:xs) = do printLines ["You have a/an " ++ id x ++ ".\n"]
 
 readCommand :: IO String
 readCommand = do
+    hSetBuffering stdin LineBuffering
     putStr "> "
     xs <- getLine
     return xs
@@ -218,6 +279,7 @@ gameLoop state = do
         "w" -> go state West
         ('t':'a':'k':'e':' ':xs) -> do takeItem state xs
         ('d':'r':'o':'p':' ':xs) -> do dropItem state xs
+        ('c':'o':'m':'b':'i':'n':'e':' ':xs) -> do combineItems state xs
         "look" -> do printLookAround state
                      gameLoop state
         "fuel" -> do printFuel state
@@ -226,13 +288,7 @@ gameLoop state = do
                      do printInventory items
                         gameLoop state
         ('s':'p':'e':'a':'k':' ':xs) -> do speakTo xs state
-        "restart" -> do printLines ["You decided to settle on this planet and guide any future travellers that will meet you.", ""]
-                        let newState = addNPC state dynamic_npcs
-                            (pos, fuel, startingFuel, inv, rooms) = newState
-                            newState2 = (startingPos, startingFuel, startingFuel, inv, rooms) in
-                            do printLookAround newState2
-                               printFuel newState2
-                               gameLoop newState2
+        "restart" -> restart state
         "instructions" -> do printInstructions
                              gameLoop state
         "quit" -> return ()
@@ -245,6 +301,13 @@ main = do
         do printLookAround newState
            printFuel newState
            gameLoop newState
+
+crafting = [
+    ["shield", "coolant", "microchip"],
+    ["hyperdrive", "steel", "generator"],
+    ["antimatter", "plasma", "particle"],
+    ["scanner", "circuit", "microprocessor"],
+    ["quantum_computer", "qubits", "black_hole"]]
 
 rooms = [
     ("Eo",          (0, 0),      [],                ["Phelly", "Kathri"],       "You are on your home planet Eo.\n"),
