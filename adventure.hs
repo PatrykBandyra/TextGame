@@ -198,7 +198,7 @@ executeTechnology state "shield" = let (pos, fuel, sfuel, inv, rooms) = state in
 executeTechnology state "hyperdrive" = let (pos, fuel, sfuel, inv, rooms) = state in
                                            do printLines ["You acquired Hyperdrive, you will now have 7 fuel after restarting.\n"]
                                               gameLoop (pos, fuel, 7, inv, rooms)
-executeTechnology state "antimater" = let (pos, fuel, sfuel, inv, rooms) = state in
+executeTechnology state "antimatter" = let (pos, fuel, sfuel, inv, rooms) = state in
                                           do printLines ["You acquired Antiamter Fuel, you will now have 9 fuel after restarting.\n"]
                                              gameLoop (pos, fuel, 9, inv, rooms)
 executeTechnology state "scanner" = let (pos, fuel, sfuel, inv, rooms) = state in
@@ -342,7 +342,7 @@ rooms = [
     ("Auster",      (0, 1),      ["coolant"],       ["Hardy"],                  "You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can''t see much because the view is obstructed by all the skyscrapers.\n"),
     ("Artemi",      (0, 2),      [],                [],                         "You are on Artemi, with your first glance you can see that it is not as populated as Eo or Artemi. There are a couple bigger cities here, but this planet mainly serves as a quarry for your home planet.\n"),
     ("Somnus",      (0, 3),      [],                [],                         "You are on Somnus. It has almost no human inhabitants because the whole planet is covered in water, but there is a whole civilization living at the bottom of the ocean.\n"),
-    ("Leda",        (0, 4),      ["microprocesor"], ["Angnet"],                 "You are on Leda, a dwarf planet. The only thing that''s on this planet is a gas station.\n"),
+    ("Leda",        (0, 4),      ["microprocessor"], ["Angnet"],                 "You are on Leda, a dwarf planet. The only thing that''s on this planet is a gas station.\n"),
     ("Fates",       (1, 0),      ["microchip"],     ["Arler"],                  "You are on Fates. It''s not even a planet, but actually a moon of your home planet. There is one city here, but other than that not much really.\n"),
     ("Avernus",     (1, 1),      ["steel"],         ["Thera"],                  "You are on Avernus. It is a moon of planet Auster. There are a couple of smaller cities here, but nothing impressive because it still is a moon.\n"),
     ("Cepheus",     (1, 2),      [],                [],                         "You are on Cepheus, which is mostly covered in sand. The only inhabitants of this planet are sand people, because only they can survive the extreme temperatures for longer periods of time.\n"),
@@ -358,7 +358,7 @@ rooms = [
     ("Enyo",        (3, 2),      [],                [],                         "You are on Enyo. For some reason it is known as the land of wind and shade. The only inhabitant of this planet is a weird species of yellow salamanders. There is still a lot to learn about this unusual planet filled with oil lakes.\n"),
     ("Hecate",      (3, 3),      [],                [],                         "You are on Hecate, the frozen planet. There is really not much to it except for ice …. and snow.\n"),
     ("Orion",       (3, 4),      [],                [],                         "You are on Orion. It is the capital planet of your galaxy, similarly to your home planet it is mostly covered in skyscrapers. The locals can be quite eccentric, but nothing that you wouldn''t handle.\n"),
-    ("Eutrepe",     (4, 0),      ["black hole"],    [],                         "You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.\n"),
+    ("Eutrepe",     (4, 0),      ["black_hole"],    [],                         "You are on Euterpe. The planet is mostly covered in hot springs on which the local inhabitants make a lot of money. Many people (mostly wealthy ones) come here to escape from their daily lives and relax a little bit.\n"),
     ("Sol",         (4, 1),      [],                [],                         "You are on Sol. It is a colossal space station that was set up to study nearby star. With time it evolved to the size of a little city and is no longer used as a research facility.\n"),
     ("Nymphs",      (4, 2),      [],                [],                         "You are on Nymphs, a small planet on which you can find the biggest and most famous nightclubs. The upper class of Orion comes here to get high and cheat on their significant others.\n"),
     ("Pandora",     (4, 3),      ["particle"],      [],                         "You are on Pandora. It is covered with all kinds of beautiful vegetation. Its inhabitants are almost one with nature and they do not trust outsiders.\n"),
