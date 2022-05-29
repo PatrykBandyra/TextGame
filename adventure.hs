@@ -180,17 +180,43 @@ combineItems state xs = let itemsToCombine = words xs
                                       case newItem of
                                            Nothing -> do printLines ["You can't combine those items.\n"]
                                                          gameLoop state
-                                           Just a -> let newInv = (inv \\ itemsToCombine) ++ [a]
+                                           Just a -> let newInv = inv \\ itemsToCombine
                                                          newRooms = insert (name, roomPos, items, npcs, desc) (delete room rooms) in
-                                                         do printLines ["OK\n"]
-                                                            gameLoop (pos, fuel, sfuel, newInv, newRooms)
-
+                                                         do executeTechnology (pos, fuel, sfuel, newInv, newRooms) a
                                else
                                    do printLines ["Some of the items you wish to combine are not in your inventory.\n"]
                                       gameLoop state
                             else
                                 do printLines ["You can only combine at least two items.\n"]
                                    gameLoop state
+
+-- Aquire new technology
+executeTechnology :: State -> String -> IO ()
+executeTechnology state "shield" = let (pos, fuel, sfuel, inv, rooms) = state in
+                                       do printLines ["You acquired Deflector Shield, you will now have 5 fuel after restarting.\n"]
+                                          gameLoop (pos, fuel, 5, inv, rooms)
+executeTechnology state "hyperdrive" = let (pos, fuel, sfuel, inv, rooms) = state in
+                                           do printLines ["You acquired Hyperdrive, you will now have 7 fuel after restarting.\n"]
+                                              gameLoop (pos, fuel, 7, inv, rooms)
+executeTechnology state "antimater" = let (pos, fuel, sfuel, inv, rooms) = state in
+                                          do printLines ["You acquired Antiamter Fuel, you will now have 9 fuel after restarting.\n"]
+                                             gameLoop (pos, fuel, 9, inv, rooms)
+executeTechnology state "scanner" = let (pos, fuel, sfuel, inv, rooms) = state in
+                                        do printLines ["You acquired Deep Space Scanner, you will now have 11 fuel after restarting.\n"]
+                                           gameLoop (pos, fuel, 11, inv, rooms)
+executeTechnology state "quantum_computer" = let (pos, fuel, sfuel, inv, rooms) = state in
+                                                 do printLines ["You acquired Quantum Computer, you can now reach origin of the Signal. Type: origin.\n"]
+                                                    gameLoop (pos, fuel, 13, inv, rooms)
+
+-- Endgame action
+origin :: State -> IO ()
+origin state = let (_, fuel, sfuel, inv, rooms) = state in
+                   if sfuel == 13 then
+                      do printLines ["Wow, you did it! You left your Galaxy! In the distance you see a very bright point growing and growing with every moment. Is it a place where creatures which are responsible for your existence live?  PIP…PIP… What is that? PIP… INTERNAL SYSTEM ERROR. BUUUM!!! (your spaceship exploded and you died - it turned out that a software engineer who was partially responsible for kernel code in system of your spaceship was not in fact a real engineer and messed up code responsible for taking care of pressure in gas tanks - this was a direct cause of an explosion: bug in code that caused the pressure in gas tanks to raise too much and too fast) :(", ""]
+                         gameLoop ((-1, -1), fuel, sfuel, inv, rooms)
+                   else
+                      do printLines ["Unknown command.", ""]
+                         gameLoop state
 
 -- Drop all items on the ground
 dropAll :: State -> State
@@ -270,6 +296,7 @@ startingPos = (0::Int, 0::Int)
 -- note that the game loop may take the game state as
 -- an argument, eg. gameLoop :: State -> IO ()
 gameLoop :: State -> IO ()
+gameLoop ((-1, -1), _, _, _, _) = printLines ["THE END"]
 gameLoop state = do
     cmd <- readCommand
     case cmd of
@@ -291,6 +318,7 @@ gameLoop state = do
         "restart" -> restart state
         "instructions" -> do printInstructions
                              gameLoop state
+        "origin" -> do origin state
         "quit" -> return ()
         _ -> do printLines ["Unknown command.", ""]
                 gameLoop state
