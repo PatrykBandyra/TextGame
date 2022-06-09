@@ -225,6 +225,8 @@ Object subclass: Game [
         'Available commands are:'
         ''
         'n s e w                -- to go in that direction.'
+        'look                   -- to look around you again.'
+        'fuel                   -- to check how much fuel you have.'
         'instructions           -- to see these instructions.'
         'quit                   -- to end the game and quit.'
         ''
@@ -313,6 +315,14 @@ Object subclass: Game [
             cmd = 'w' ifTrue: [
                 state move: #west
             ].
+
+            cmd = 'look' ifTrue: [
+                state printLookAround.
+            ]
+
+            cmd = 'fuel' ifTrue: [
+                state printFuel.
+            ]
 
             cmd = 'instructions' ifTrue: [
                 self printInstructions.
