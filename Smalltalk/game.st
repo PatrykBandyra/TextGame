@@ -1,46 +1,15 @@
-"The germ of a text adventure game
-Marcin Szlenk 2022"
-
-"Game class
-
-Responsibilities:
-* print/read outputs/inputs
-* handle game loop
-* handle 'instructions' and 'halt' commands
-
-Collaborators:
-* ..."
+FileStream fileIn: 'state.st'.
 
 Object subclass: Game [
-    | isGameOver |
-
-    introductionText := #(
-        'A long time ago, in a galaxy far, far away...'
-        ''
-        'It is a period of civil war. Rebel'
-        'spaceships, striking from a hidden'
-        'base, have won their first victory'
-        'against the evil Galactic Empire.'
-        ''
-        'During the battle, Rebel spies managed'
-        'to steal secret plans to the Empire''s'
-        'ultimate weapon, the Death Star, an'
-        'armored space station with enough'
-        'power to destroy an entire planet.'
-        ''
-        'Pursued by the Empire''s sinister agents,'
-        'Princess Leia races home aboard her'
-        'starship, custodian of the stolen plans'
-        'that can save her people and restore'
-        'freedom to the galaxy....'
-        ''
-    ).
+    |isGameOver state|
+    startingPos := Pos x: 0 y: 0.
 
     instructionsText := #(
         'Available commands are:'
         ''
-        'instructions  -- to see these instructions.'
-        'quit          -- to end the game and quit.'
+        'n s e w                -- to go in that direction.'
+        'instructions           -- to see these instructions.'
+        'quit                   -- to end the game and quit.'
         ''
     ).
  
@@ -52,7 +21,8 @@ Object subclass: Game [
     ]
 
     init [
-        isGameOver := false
+        isGameOver := false.
+        state := State pos: startingPos fuel: 3 sFuel: 3.
     ]
 
     "Print strings from array in separate lines."
@@ -85,6 +55,22 @@ Object subclass: Game [
 
             isUnknown := true.
             cmd := self readCommand.
+
+            cmd = 'n' ifTrue: [
+                state move: #north
+            ].
+
+            cmd = 's' ifTrue: [
+                state move: #south
+            ].
+
+            cmd = 'e' ifTrue: [
+                state move: #east
+            ].
+
+            cmd = 'w' ifTrue: [
+                state move: #west
+            ].
 
             cmd = 'instructions' ifTrue: [
                 self printInstructions.
