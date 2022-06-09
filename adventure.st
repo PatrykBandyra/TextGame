@@ -1,5 +1,12 @@
+"Pos class
+
+Responsibilities:
+* handle position variables
+* handle moving"
+
 Object subclass: Pos [
     |x y|
+    "Initialize borders of the map."
     maxX := 4.
     maxY := 4.
     minX := 0.
@@ -25,6 +32,8 @@ Object subclass: Pos [
         self error: 'Please use x:y: to create Pos instance'.
     ]
 
+    "Returns new Pos depending on the direction,
+     does not change current Pos."
     move: direction [
         |newX newY|
         newX := x.
@@ -52,6 +61,11 @@ Object subclass: Pos [
         ^y.
     ]
 ]
+
+"Planet class
+
+Responsibilities:
+* handle Planet variables"
 
 Object subclass: Planet [
     |name pos items npcs description|
@@ -111,6 +125,13 @@ Object subclass: Planet [
         ^description.
     ]
 ]
+
+"State class
+
+Responsibilities:
+* print outputs
+* handle game state
+* handle all commands available in game"
 
 Object subclass: State [
     |pos fuel sFuel inv planets|
@@ -172,6 +193,7 @@ Object subclass: State [
         ^planets.
     ]
 
+    "Go in chosen direction and print appropriate text."
     move: direction [
         |newPos|
         fuel == 0
@@ -189,6 +211,7 @@ Object subclass: State [
             ].
     ]
 
+    "Find Room in the list by its Pos."
     findRoomByPos: apos [
         |found|
         found := Planet name: 'Error' pos: [Pos x: -1 y: -1] items: {} npcs: {} description: ''.
@@ -199,6 +222,7 @@ Object subclass: State [
         ^found.
     ]
 
+    "print look around."
     printLookAround [
         |planet desc|
         planet := self findRoomByPos: pos.
@@ -206,20 +230,29 @@ Object subclass: State [
         self printLines: {desc. ''}.
     ]
 
+    "print fuel value."
     printFuel [
         fuel == 0
             ifTrue: [self printLines: #('You don''t have any fuel.' '')]
             ifFalse: [self printLines: {'You have ', (fuel asString), ' fuel left.'. ''}].
     ]
 
+    "Print strings from array in separate lines."
     printLines: anArray [
         anArray do: [ :string | Transcript show: string; cr ]
     ]
 ]
 
+"Game class
+
+Responsibilities:
+* print/read outputs/inputs
+* handle game loop
+* handle all commands"
+
 Object subclass: Game [
     |isGameOver state|
-    startingPos := Pos x: 0 y: 0.
+    startingPos := Pos x: 0 y: 0. "Initialize starting Pos."
 
     instructionsText := #(
         'Available commands are:'
@@ -232,6 +265,7 @@ Object subclass: Game [
         ''
     ).
 
+    "Initialize starting values for all Planets."
     startingPlanets := {
         Planet name: 'Eo'           pos: (Pos x: 0 y: 0)    items: {}               npcs: {}            description: 'You are on your home planet Eo.'.
         Planet name: 'Auster'       pos: (Pos x: 0 y: 1)    items: {}               npcs: {}            description: 'You arrived on Auster, the only other planet you have ever been on. It is very similar to your home planet Eo. You can''t see much because the view is obstructed by all the skyscrapers.'.
@@ -301,28 +335,34 @@ Object subclass: Game [
             cmd := self readCommand.
 
             cmd = 'n' ifTrue: [
-                state move: #north
+                state move: #north.
+                isUnknown := false
             ].
 
             cmd = 's' ifTrue: [
-                state move: #south
+                state move: #south.
+                isUnknown := false
             ].
 
             cmd = 'e' ifTrue: [
-                state move: #east
+                state move: #east.
+                isUnknown := false
             ].
 
             cmd = 'w' ifTrue: [
-                state move: #west
+                state move: #west.
+                isUnknown := false
             ].
 
             cmd = 'look' ifTrue: [
                 state printLookAround.
-            ]
+                isUnknown := false
+            ].
 
             cmd = 'fuel' ifTrue: [
                 state printFuel.
-            ]
+                isUnknown := false
+            ].
 
             cmd = 'instructions' ifTrue: [
                 self printInstructions.
