@@ -65,7 +65,8 @@ Object subclass: Pos [
 "Planet class
 
 Responsibilities:
-* handle Planet variables"
+* handle Planet variables
+* handle items on the Planet"
 
 Object subclass: Planet [
     |name pos items npcs description|
@@ -125,10 +126,12 @@ Object subclass: Planet [
         ^description.
     ]
 
+    "Remove item from the planet."
     removeItem: item [
         items := (items reject: [:e | e = item]).
     ]
 
+    "Add item to the planet."
     addItem: item [
         items := items copyWith: item.
     ]
@@ -138,7 +141,7 @@ Object subclass: Planet [
 
 Responsibilities:
 * print outputs
-* handle game state
+* handle game State
 * handle all commands available in game"
 
 Object subclass: State [
@@ -231,6 +234,7 @@ Object subclass: State [
         ^found.
     ]
 
+    "Pick up an item from the ground."
     takeItem: item [
         |planet items|
         (inv includes: item)
@@ -247,6 +251,7 @@ Object subclass: State [
             ].
     ]
 
+    "Drop an item on the ground"
     dropItem: item [
         |planet|
         (inv includes: item)
@@ -258,14 +263,17 @@ Object subclass: State [
             ifFalse: [self printLines: {'You are not holding ', item, '.'. ''}].
     ]
 
+    "Remove item from the inventory."
     removeItem: item [
         inv := (inv reject: [:e | e = item]).
     ]
 
+    "Add item to the inventory."
     addItem: item [
         inv := inv copyWith: item.
     ]
 
+    "Drop all items on the ground and restart the game"
     restart [
         self printLines: #('You decided to settle on this planet and guide any future travellers that will meet you.' '').
         self dropAll.
@@ -275,6 +283,7 @@ Object subclass: State [
         self printFuel.
     ]
 
+    "Drop all items on the ground."
     dropAll [
         |planet|
         planet := self findRoomByPos: pos.
@@ -283,7 +292,7 @@ Object subclass: State [
             self removeItem: item.].
     ]
 
-    "print look around."
+    "Print look around."
     printLookAround [
         |planet desc items|
         planet := self findRoomByPos: pos.
@@ -293,18 +302,20 @@ Object subclass: State [
         self printItems: items.
     ]
 
-    "print fuel value."
+    "Print fuel value."
     printFuel [
         fuel == 0
             ifTrue: [self printLines: #('You don''t have any fuel.' '')]
             ifFalse: [self printLines: {'You have ', (fuel asString), ' fuel left.'. ''}].
     ]
 
+    "Print items lying on the ground."
     printItems: items [
         items do: [ :item |
             self printLines: {'There is a/an ', item, ' here.'. ''}].
     ]
 
+    "Print items in the inventory."
     printInventory [
         inv do: [ :item |
             self printLines: {'You have a/an ', item, '.'. ''}].
@@ -396,6 +407,8 @@ Object subclass: Game [
         ^ FileStream stdin nextLine
     ]
 
+    "Return first n element of the string.
+     If the string is smaller than n returns string."
     resize: string to: n [
         string size < n
             ifTrue: [^string]
