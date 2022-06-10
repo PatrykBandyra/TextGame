@@ -143,13 +143,14 @@ Responsibilities:
 
 Object subclass: State [
     |pos fuel sFuel inv planets|
+    startingPos := Pos x: 0 y: 0. "Initialize starting Pos."
     cantGoThere := #('You can''t go there.' '').
     notEnoughFuel := #('You don''t have any fuel left.' '').
 
-    State class >> pos: apos fuel: afuel sFuel: asFuel inv: ainv planets: aplanets[
+    State class >> fuel: afuel sFuel: asFuel inv: ainv planets: aplanets[
         |instance|
         instance := super new.
-        instance pos: apos.
+        instance pos: startingPos.
         instance fuel: afuel.
         instance sFuel: asFuel.
         instance inv: ainv.
@@ -178,7 +179,7 @@ Object subclass: State [
     ]
 
     State class >> new [
-        self error: 'Please use pos: to create State instance'.
+        self error: 'Please use fuel:sFuel:inv:planets to create State instance'.
     ]
 
     getPos [
@@ -265,6 +266,23 @@ Object subclass: State [
         inv := inv copyWith: item.
     ]
 
+    restart [
+        self printLines: #('You decided to settle on this planet and guide any future travellers that will meet you.' '').
+        self dropAll.
+        fuel := sFuel.
+        pos := startingPos.
+        self printLookAround.
+        self printFuel.
+    ]
+
+    dropAll [
+        |planet|
+        planet := self findRoomByPos: pos.
+        inv do: [ :item |
+            planet addItem: item.
+            self removeItem: item.].
+    ]
+
     "print look around."
     printLookAround [
         |planet desc items|
@@ -307,7 +325,6 @@ Responsibilities:
 
 Object subclass: Game [
     |isGameOver state|
-    startingPos := Pos x: 0 y: 0. "Initialize starting Pos."
 
     instructionsText := #(
         'Available commands are:'
@@ -318,6 +335,7 @@ Object subclass: Game [
         'look                   -- to look around you again.'
         'fuel                   -- to check how much fuel you have.'
         'inv                    -- to check what items you are holding.'
+        'restart                -- to settle on the current planet and start again.'
         'instructions           -- to see these instructions.'
         'quit                   -- to end the game and quit.'
         ''
@@ -361,7 +379,7 @@ Object subclass: Game [
 
     init [
         isGameOver := false.
-        state := State pos: startingPos fuel: 3 sFuel: 3 inv: {} planets: startingPlanets.
+        state := State fuel: 3 sFuel: 3 inv: {} planets: startingPlanets.
     ]
 
     "Print strings from array in separate lines."
@@ -440,6 +458,11 @@ Object subclass: Game [
 
             cmd = 'inv' ifTrue: [
                 state printInventory.
+                isUnknown := false
+            ].
+
+            cmd = 'restart' ifTrue: [
+                state restart.
                 isUnknown := false
             ].
 
