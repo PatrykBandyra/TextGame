@@ -62,6 +62,52 @@ Object subclass: Pos [
     ]
 ]
 
+"Recipe class
+
+Responsibilities:
+* handle Recipe variables"
+
+Object subclass: Recipe [
+    |result first second|
+
+    Recipe class >> result: aresult first: afirst second: asecond [
+        |instance|
+        instance := super new.
+        instance result: aresult.
+        instance first: afirst.
+        instance second: asecond.
+        ^instance.
+    ]
+
+    result: aresult [
+        result := aresult.
+    ]
+
+    first: afirst [
+        first := afirst.
+    ]
+
+    second: asecond [
+        second := asecond.
+    ]
+
+    Recipe class >> new [
+        self error: 'Please use result:first:second to create Recipe instance'.
+    ]
+
+    getResult [
+        ^result.
+    ]
+
+    getFirst [
+        ^first.
+    ]
+
+    getSecond [
+        ^second.
+    ]
+]
+
 "Planet class
 
 Responsibilities:
@@ -149,6 +195,15 @@ Object subclass: State [
     startingPos := Pos x: 0 y: 0. "Initialize starting Pos."
     cantGoThere := #('You can''t go there.' '').
     notEnoughFuel := #('You don''t have any fuel left.' '').
+
+    "Initialize recipes."
+    recipes := {
+        Recipe result: 'shield'             first: 'coolant'      second: 'microchip'.    
+        Recipe result: 'hyperdrive'         first: 'steel'        second: 'generator'.
+        Recipe result: 'antimatter'         first: 'plasma'       second: 'particle'.
+        Recipe result: 'scanner'            first: 'circuit'      second: 'microprocessor'.    
+        Recipe result: 'quantum_computer'   first: 'qubits'       second: 'black_hole'.           
+    }.
 
     State class >> fuel: afuel sFuel: asFuel inv: ainv planets: aplanets[
         |instance|
@@ -263,6 +318,43 @@ Object subclass: State [
             ifFalse: [self printLines: {'You are not holding ', item, '.'. ''}].
     ]
 
+    "Combine items in inventory"
+    combineItems: itemsToCombine [
+        |words first second result|
+        words := itemsToCombine tokenize: ' '.
+        words size > 1
+            ifTrue: [
+                first := words at: 1.
+                second := words at: 2.
+                ((inv includes: first) and: [inv includes: second])
+                    ifTrue: [
+                        result := self craft: words.
+                        result = 'NaN'
+                            ifTrue: [self printLines: #('You can''t combine those items.' '')]
+                            ifFalse: [
+                                self removeItem: first.
+                                self removeItem: second.
+                                self printLines: #('OK' '').
+                            ].
+                    ]
+                    ifFalse: [self printLines: #('Some of the items you wish to combine are not in your inventory.' '')].
+            ]
+            ifFalse: [self printLines: #('You can only combine at least two items.' '')].
+    ]
+
+    "Check if items match any of the craftings."
+    craft: items [
+        |sortedItems result first second|
+        sortedItems := items sorted: [ :x :y | x first < y first].
+        first := sortedItems at: 1.
+        second := sortedItems at: 2.
+        result := 'NaN'.
+        recipes do: [ :recipe | 
+            (first = recipe getFirst and: [second = recipe getSecond])
+                ifTrue: [result := recipe getResult].].
+        ^result
+    ]
+
     "Remove item from the inventory."
     removeItem: item [
         inv := (inv reject: [:e | e = item]).
@@ -343,6 +435,7 @@ Object subclass: Game [
         'n s e w                -- to go in that direction.'
         'take item              -- to pick up an item.'
         'drop item              -- to drop an item.'
+        'combine item1 item2    -- to combine items.'
         'look                   -- to look around you again.'
         'fuel                   -- to check how much fuel you have.'
         'inv                    -- to check what items you are holding.'
@@ -456,6 +549,11 @@ Object subclass: Game [
 
             ((self resize: cmd to: 5) = 'drop ') ifTrue: [
                 state dropItem: (cmd copyFrom: 6).
+                isUnknown := false
+            ].
+
+            ((self resize: cmd to: 8) = 'combine ') ifTrue: [
+                state combineItems: (cmd copyFrom: 9).
                 isUnknown := false
             ].
 
