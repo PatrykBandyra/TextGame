@@ -47,7 +47,7 @@ Object subclass: Pos [
         (direction == #east and: [x < maxX])
             ifTrue: [newX := x + 1].
         
-        (direction == #west and: [x < minX])
+        (direction == #west and: [x > minX])
             ifTrue: [newX := x - 1].
         
         ^Pos x: newX y: newY
@@ -199,10 +199,10 @@ Object subclass: State [
     "Initialize recipes."
     recipes := {
         Recipe result: 'shield'             first: 'coolant'      second: 'microchip'.    
-        Recipe result: 'hyperdrive'         first: 'steel'        second: 'generator'.
-        Recipe result: 'antimatter'         first: 'plasma'       second: 'particle'.
+        Recipe result: 'hyperdrive'         first: 'generator'    second: 'steel'.
+        Recipe result: 'antimatter'         first: 'particle'     second: 'plasma'.
         Recipe result: 'scanner'            first: 'circuit'      second: 'microprocessor'.    
-        Recipe result: 'quantum_computer'   first: 'qubits'       second: 'black_hole'.           
+        Recipe result: 'quantum_computer'   first: 'black_hole'   second: 'qubits'.           
     }.
 
     State class >> fuel: afuel sFuel: asFuel inv: ainv planets: aplanets[
@@ -334,7 +334,7 @@ Object subclass: State [
                             ifFalse: [
                                 self removeItem: first.
                                 self removeItem: second.
-                                self printLines: #('OK' '').
+                                self execute: result.
                             ].
                     ]
                     ifFalse: [self printLines: #('Some of the items you wish to combine are not in your inventory.' '')].
@@ -349,10 +349,48 @@ Object subclass: State [
         first := sortedItems at: 1.
         second := sortedItems at: 2.
         result := 'NaN'.
-        recipes do: [ :recipe | 
+        recipes do: [ :recipe |
             (first = recipe getFirst and: [second = recipe getSecond])
                 ifTrue: [result := recipe getResult].].
         ^result
+    ]
+
+    "Aquire new technology"
+    execute: technology [
+        technology = 'shield' ifTrue: [
+            self printLines: #('You acquired Deflector Shield, you will now have 5 fuel after restarting.' '').
+            sFuel := 5.
+        ].
+
+        technology = 'hyperdrive' ifTrue: [
+            self printLines: #('You acquired Hyperdrive, you will now have 7 fuel after restarting.' '').
+            sFuel := 7.
+        ].
+
+        technology = 'antimatter' ifTrue: [
+            self printLines: #('You acquired Antiamter Fuel, you will now have 9 fuel after restarting.' '').
+            sFuel := 9.
+        ].
+
+        technology = 'scanner' ifTrue: [
+            self printLines: #('You acquired Deep Space Scanner, you will now have 11 fuel after restarting.' '').
+            sFuel := 11.
+        ].
+
+        technology = 'quantum_computer' ifTrue: [
+            self printLines: #('You acquired Quantum Computer, you can now reach origin of the Signal. Type: origin.' '').
+            sFuel := 13.
+        ].
+    ]
+
+    "Endgame action"
+    origin [
+        sFuel == 13
+            ifTrue: [
+                self printLines: #('Wow, you did it! You left your Galaxy! In the distance you see a very bright point growing and growing with every moment. Is it a place where creatures which are responsible for your existence live?  PIP…PIP… What is that? PIP… INTERNAL SYSTEM ERROR. BUUUM!!! (your spaceship exploded and you died - it turned out that a software engineer who was partially responsible for kernel code in system of your spaceship was not in fact a real engineer and messed up code responsible for taking care of pressure in gas tanks - this was a direct cause of an explosion: bug in code that caused the pressure in gas tanks to raise too much and too fast) :(' '').
+                pos := Pos x: -1 y: -1.
+            ]
+            ifFalse: [self printLines: #('Unknown command.' '')].
     ]
 
     "Remove item from the inventory."
@@ -574,6 +612,11 @@ Object subclass: Game [
 
             cmd = 'restart' ifTrue: [
                 state restart.
+                isUnknown := false
+            ].
+
+            cmd = 'origin' ifTrue: [
+                state origin.
                 isUnknown := false
             ].
 
