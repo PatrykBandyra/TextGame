@@ -256,6 +256,7 @@ Object subclass: State [
         Recipe result: 'quantum_computer'   first: 'black_hole'   second: 'qubits'.           
     }.
 
+    "Initialize dialogs."
     dialogs := {
         Dialog person: 'Hardy'         dialog: 'Hi! Are you from Eo? Yes? So cool, I have half of my family there. My name is Hardy. I call myself an adventurer, although I have never been outside of our solar system. Well… But you know what? Maybe you will help me out in my escape from this galaxy? I am so hungry for travel which I cannot afford. You are really trying to build this superb spaceship? So cool!!! I can even help you! I know about the Hyperdrive schema - I was an engineer… Before they threw me out of my company and took all the titles. So... You need a Reinforced Steel and Electromagnetic Generator. I have one more hint for you. If you were in need of a Gold-Plated Microchip, you would have to go to Fates where they have a small factory of these rare components.'.
         Dialog person: 'Jamy'          dialog: 'Hello! Welcome on Somnus! I am Jame. Do you remember me? Yes? So cool. I am not going to waste your time. Good luck in your search!'.
@@ -525,6 +526,7 @@ Object subclass: State [
             self removeItem: item.].
     ]
 
+    "Add dynamic NPC to a room after restart."
     addNpc [
         |planet npc|
         planet := self findRoomByPos: pos.
